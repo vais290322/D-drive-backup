@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/settings.css">
+  <title>Settings - Telecells Manager</title>
+</head>
+<body>
+  <section id="settings" class="page">
+    <h1>Settings</h1>
+    <div class="settings-container">
+      <div class="settings-section">
+        <h3 class="settings-title">General Settings</h3>
+        <form id="general-settings-form">
+          <div class="form-group">
+            <label for="company-name">Company Name</label>
+            <input type="text" id="company-name" name="companyName">
+          </div>
+          <div class="form-group">
+            <label for="default-page">Default Page</label>
+            <select id="default-page" name="defaultPage">
+              <option value="dashboard">Dashboard</option>
+              <option value="employees">Employees</option>
+              <option value="calls">Calls</option>
+              <option value="weather">Weather</option>
+              <option value="news">News</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-btn">Save General Settings</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="settings-section">
+        <h3 class="settings-title">Appearance</h3>
+        <form id="appearance-form">
+          <div class="form-group">
+            <label>Theme</label>
+            <div class="theme-options">
+              <div class="theme-option active" data-theme="light">
+                <div class="theme-preview light"></div>
+                <span class="theme-name">Light</span>
+              </div>
+              <div class="theme-option" data-theme="dark">
+                <div class="theme-preview dark"></div>
+                <span class="theme-name">Dark</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-btn">Save Appearance</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="settings-section">
+        <h3 class="settings-title">Notifications</h3>
+        <div class="notification-option">
+          <div class="notification-info">
+            <div class="notification-title">Call Alerts</div>
+            <div class="notification-description">Receive notifications for new calls</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="call-notifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notification-option">
+          <div class="notification-info">
+            <div class="notification-title">Employee Updates</div>
+            <div class="notification-description">Receive notifications for employee changes</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="employee-notifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notification-option">
+          <div class="notification-info">
+            <div class="notification-title">News Updates</div>
+            <div class="notification-description">Receive notifications for important news</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="news-notifications">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3 class="settings-title">Data Management</h3>
+        <div class="backup-options">
+          <button id="export-data-btn" class="secondary-btn">Export Data</button>
+          <button id="import-data-btn" class="secondary-btn">Import Data</button>
+          <button id="clear-data-btn" class="danger-btn">Clear All Data</button>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3 class="settings-title">About</h3>
+        <p>Telecells Manager v1.0.0</p>
+        <p>A desktop application for managing telecells company calls and employees.</p>
+        <p>&copy; 2023 Telecells</p>
+      </div>
+    </div>
+  </section>
+  
+  <script src="../js/settings.js"></script>
+</body>
+</html>

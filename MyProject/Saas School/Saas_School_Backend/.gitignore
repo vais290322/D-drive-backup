@@ -1,0 +1,11 @@
+node_modules/
+.env
+dist/
+build/
+*.log
+*.lock
+*.DS_Store
+*.swp
+*.swo
+*.swx
+*.swn

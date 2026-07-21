@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <title>Dashboard - Telecells Manager</title>
+</head>
+<body>
+  <section id="dashboard" class="page active">
+    <h1>Dashboard</h1>
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>Total Employees</h3>
+        <p id="employee-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Calls</h3>
+        <p id="call-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Avg Call Duration</h3>
+        <p id="avg-duration">0 min</p>
+      </div>
+      <div class="stat-card">
+        <h3>Today's Calls</h3>
+        <p id="today-calls">0</p>
+      </div>
+    </div>
+    <div class="charts-container">
+      <div class="chart-card">
+        <h3>Call Distribution</h3>
+        <canvas id="call-distribution-chart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Weekly Performance</h3>
+        <canvas id="weekly-performance-chart"></canvas>
+      </div>
+    </div>
+    
+    <div class="recent-activity">
+      <h3>Recent Activity</h3>
+      <div id="activity-list">
+        <!-- Activity items will be added here -->
+      </div>
+    </div>
+  </section>
+  
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>

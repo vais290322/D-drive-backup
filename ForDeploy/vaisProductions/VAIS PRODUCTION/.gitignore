@@ -1,0 +1,189 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+
+
+
+       {/* Vehicle Exhibitor Registration */}
+            {/* <motion.div
+              className="mb-10 bg-white p-6 rounded-lg shadow-sm border border-gray-100"
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+            >
+              <h3 className="text-lg font-semibold mb-6 text-gray-800 flex items-center">
+                <span className="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                  2
+                </span>
+                Vehicle Exhibitor Registration
+              </h3>
+              <div className="space-y-6">
+                <div className="flex items-center">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        name="showcasingVehicle"
+                        checked={formData.showcasingVehicle}
+                        onChange={handleChange}
+                        required
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                    </div>
+                    <span className="ml-3 text-gray-700 font-medium">
+                      Are you showcasing a vehicle?
+                    </span>
+                  </label>
+                </div>
+
+                <AnimatePresence>
+                  {formData.showcasingVehicle && (
+                    <motion.div
+                      className="pl-6 space-y-6 border-l-2 border-orange-200"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-3">
+                          Vehicle Type
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="vehicleType"
+                              value="Car"
+                              checked={formData.vehicleType === "Car"}
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">Car</span>
+                          </label>
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="vehicleType"
+                              value="Bike"
+                              checked={formData.vehicleType === "Bike"}
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">Bike</span>
+                          </label>
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="vehicleType"
+                              value="Both"
+                              checked={formData.vehicleType === "Both"}
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">Both</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-gray-700 font-medium">
+                          Number of Vehicles Exhibiting
+                        </label>
+                        <input
+                          type="number"
+                          name="numberOfVehicles"
+                          value={formData.numberOfVehicles}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                          placeholder="e.g. 2"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-gray-700 font-medium">
+                          Brief Vehicle Description
+                        </label>
+                        <p className="text-sm text-gray-500 mb-2">
+                          For display card or promotional materials
+                        </p>
+                        <textarea
+                          name="vehicleDescription"
+                          value={formData.vehicleDescription}
+                          onChange={handleChange}
+                          rows="3"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                          placeholder="Describe the vehicles you'll be showcasing..."
+                        ></textarea>
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-3">
+                          Display Space Preference
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="displaySpace"
+                              value="Indoor"
+                              checked={formData.displaySpace === "Indoor"}
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">Indoor</span>
+                          </label>
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="displaySpace"
+                              value="Outdoor"
+                              checked={formData.displaySpace === "Outdoor"}
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">Outdoor</span>
+                          </label>
+                          <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:border-orange-400 cursor-pointer transition">
+                            <input
+                              type="radio"
+                              name="displaySpace"
+                              value="No preference"
+                              checked={
+                                formData.displaySpace === "No preference"
+                              }
+                              onChange={handleChange}
+                              className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 cursor-pointer"
+                            />
+                            <span className="ml-3">No preference</span>
+                          </label>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div> */}

@@ -1,0 +1,5 @@
+export * from "./HomeBlogSection"
+export * from "./HomeGallerySection"
+export * from "./HomeAchievementsSection"
+export * from "./HomeNoticeSection"
+export * from "./HomeAboutSection"

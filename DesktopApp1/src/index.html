@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telecells - Advanced Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Animated Background */
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      .bg-shapes {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: floatShapes 15s infinite linear;
+      }
+
+      @keyframes floatShapes {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 2rem 1.5rem;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 1.5s ease;
+      }
+
+      .sidebar:hover::before {
+        left: 100%;
+      }
+
+      .logo {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        font-weight: 800;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        animation: logoGlow 3s ease-in-out infinite;
+        position: relative;
+      }
+
+      @keyframes logoGlow {
+        0%,
+        100% {
+          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          transform: scale(1);
+        }
+        50% {
+          text-shadow: 0 4px 20px rgba(255, 255, 255, 0.5);
+          transform: scale(1.05);
+        }
+      }
+
+      nav ul {
+        list-style: none;
+      }
+
+      nav li {
+        margin-bottom: 0.8rem;
+        transform: translateX(-50px);
+        opacity: 0;
+        animation: slideInNav 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      nav li:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      nav li:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      nav li:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      nav li:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      nav li:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      nav li:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes slideInNav {
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      nav a {
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 1.2rem 1.5rem;
+        border-radius: 15px;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+        gap: 0.8rem;
+      }
+
+      nav a::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.8s ease;
+      }
+
+      nav a:hover::before {
+        left: 100%;
+      }
+
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: translateX(15px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      nav li.active a {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        transform: translateX(10px);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 2.5rem;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .dashboard-header {
+        margin-bottom: 3rem;
+        animation: fadeInDown 1s ease;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dashboard-header h1 {
+        color: white;
+        font-size: 3.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #fff, #f0f0f0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .dashboard-header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.3rem;
+        font-weight: 300;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        animation: fadeInUp 1s ease 0.3s both;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 0.8s ease;
+      }
+
+      .stat-card:hover::before {
+        left: 100%;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .stat-number {
+        color: #ffd700;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        animation: numberPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes numberPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .stat-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .stat-change {
+        color: #4caf50;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        font-weight: 600;
+      }
+
+      .stat-change.negative {
+        color: #ff6b6b;
+      }
+
+      /* Charts and Tables Container */
+      .dashboard-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        animation: fadeInUp 1s ease 0.6s both;
+      }
+
+      .content-section {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Enhanced Table */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .data-table thead {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .data-table th {
+        color: white;
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .data-table td {
+        color: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.01);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-interested {
+        background: #4caf50;
+        color: white;
+      }
+      .status-callback {
+        background: #ff9800;
+        color: white;
+      }
+      .status-not-interested {
+        background: #ff5722;
+        color: white;
+      }
+      .status-completed {
+        background: #2196f3;
+        color: white;
+      }
+
+      /* Activity Feed */
+      .activity-feed {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        border-left: 4px solid #4caf50;
+        transition: all 0.3s ease;
+        animation: slideInRight 0.8s ease forwards;
+        opacity: 0;
+        transform: translateX(50px);
+      }
+
+      .activity-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .activity-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .activity-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .activity-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .activity-item:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+
+      @keyframes slideInRight {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .activity-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-5px);
+      }
+
+      .activity-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        animation: rotate 3s linear infinite;
+      }
+
+      @keyframes rotate {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .activity-content {
+        flex: 1;
+      }
+
+      .activity-title {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+      }
+
+      .activity-time {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Progress Bars */
+      .progress-container {
+        margin: 1.5rem 0;
+      }
+
+      .progress-label {
+        color: white;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #4caf50, #8bc34a);
+        border-radius: 10px;
+        transition: width 2s cubic-bezier(0.23, 1, 0.32, 1);
+        animation: progressGlow 2s ease-in-out infinite;
+      }
+
+      @keyframes progressGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+        }
+      }
+
+      /* Quick Actions */
+      .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .action-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #764ba2, #667eea);
+      }
+
+      .action-btn:active {
+        transform: translateY(-1px) scale(1.02);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1200px) {
+        .dashboard-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .app-container {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          padding: 1.5rem 1rem;
+        }
+
+        .main-content {
+          padding: 1.5rem;
+        }
+
+        .dashboard-header h1 {
+          font-size: 2.5rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .quick-actions {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stat-card {
+          padding: 1.5rem 1rem;
+        }
+
+        .content-section {
+          padding: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+          padding: 0.8rem 0.5rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      /* Loading Animation */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">🚀 Telecells</h2>
+        <nav>
+          <ul>
+            <li class="active">
+              <a href="index.html"><span>📊</span> Dashboard</a>
+            </li>
+            <li>
+              <a href="employees.html"><span>👥</span> Employees</a>
+            </li>
+            <li>
+              <a href="calls.html"><span>📞</span> Calls</a>
+            </li>
+            <li>
+              <a href="weather.html"><span>☀️</span> Weather</a>
+            </li>
+            <li>
+              <a href="news.html"><span>📰</span> News</a>
+            </li>
+            <li>
+              <a href="settings.html"><span>⚙️</span> Settings</a>
+            </li>
+
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="dashboard-header">
+          <h1>📊 Dashboard</h1>
+          <p>
+            Welcome to Telecells — Your comprehensive telecalling management
+            system
+          </p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div class="stat-number" data-target="47">10</div>
+            <div class="stat-label">Total Employees</div>
+            <div class="stat-change">+3 this month</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📞</span>
+            <div class="stat-number" data-target="1,247">80</div>
+            <div class="stat-label">Calls Today</div>
+            <div class="stat-change">+18% vs yesterday</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-number" data-target="89">40</div>
+            <div class="stat-label">Successful Calls</div>
+            <div class="stat-change">+12% success rate</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏰</span>
+            <div class="stat-number" data-target="34">20</div>
+            <div class="stat-label">Pending Callbacks</div>
+            <div class="stat-change negative">-5 from yesterday</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <div class="stat-number" data-target="₹2.4M">₹500000</div>
+            <div class="stat-label">Revenue This Month</div>
+            <div class="stat-change">+24% growth</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-number" data-target="78">60</div>
+            <div class="stat-label">Conversion Rate</div>
+            <div class="stat-change">+5.2% improvement</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button
+            class="action-btn"
+            onclick="showNotification('New call assigned!')"
+          >
+            <span>📞</span> New Call
+          </button>
+          <button
+            class="action-btn"
+            onclick="showNotification('Employee added!')"
+          >
+            <span>👤</span> Add Employee
+          </button>
+          <button
+            class="action-btn"
+            onclick="showNotification('Report generated!')"
+          >
+            <span>📊</span> Generate Report
+          </button>
+          <button
+            class="action-btn"
+            onclick="showNotification('Data exported!')"
+          >
+            <span>📥</span> Export Data
+          </button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+          <!-- Recent Calls Table -->
+          <div class="content-section">
+            <h3 class="section-title"><span>📞</span> Recent Calls</h3>
+
+            <!-- Performance Progress Bars -->
+            <div class="progress-container">
+              <div class="progress-label">
+                <span>Daily Target Progress</span>
+                <span>74%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 74%"></div>
+              </div>
+            </div>
+
+            <div class="progress-container">
+              <div class="progress-label">
+                <span>Monthly Goal</span>
+                <span>89%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 89%"></div>
+              </div>
+            </div>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Customer</th>
+                  <th>Duration</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>👨‍💼 Debajyoti Mondal</td>
+                  <td>Rahul Sharma</td>
+                  <td>12:34</td>
+                  <td>
+                    <span class="status-badge status-interested"
+                      >Interested</span
+                    >
+                  </td>
+                  <td>2 mins ago</td>
+                </tr>
+                <tr>
+                  <td>👩‍💼 Aniket Dey</td>
+                  <td>Priya Patel</td>
+                  <td>8:21</td>
+                  <td>
+                    <span class="status-badge status-callback">Callback</span>
+                  </td>
+                  <td>5 mins ago</td>
+                </tr>
+                <tr>
+                  <td>👨‍💼 Ayan Dey</td>
+                  <td>Amit Kumar</td>
+                  <td>15:45</td>
+                  <td>
+                    <span class="status-badge status-completed">Completed</span>
+                  </td>
+                  <td>12 mins ago</td>
+                </tr>
+                <tr>
+                  <td>👩‍💼 Arnab Gupta</td>
+                  <td>Neha Gupta</td>
+                  <td>6:12</td>
+                  <td>
+                    <span class="status-badge status-not-interested"
+                      >Not Interested</span
+                    >
+                  </td>
+                  <td>18 mins ago</td>
+                </tr>
+                <tr>
+                  <td>👨‍💼 Tuhin Mondal</td>
+                  <td>Ravi Singh</td>
+                  <td>9:33</td>
+                  <td>
+                    <span class="status-badge status-interested"
+                      >Interested</span
+                    >
+                  </td>
+                  <td>25 mins ago</td>
+                </tr>
+                <tr>
+                  <td>👩‍💼 Roni Mukherjee</td>
+                  <td>Anjali Sharma</td>
+                  <td>11:07</td>
+                  <td>
+                    <span class="status-badge status-callback">Callback</span>
+                  </td>
+                  <td>32 mins ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="content-section">
+            <h3 class="section-title"><span>🔥</span> Live Activity</h3>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <span class="activity-icon">📞</span>
+                <div class="activity-content">
+                  <div class="activity-title">New call completed</div>
+                  <div class="activity-time">
+                    Debajyoti Mondal • 2 minutes ago
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">👤</span>
+                <div class="activity-content">
+                  <div class="activity-title">Employee logged in</div>
+                  <div class="activity-time">Sarah Wilson • 5 minutes ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">⏰</span>
+                <div class="activity-content">
+                  <div class="activity-title">Callback scheduled</div>
+                  <div class="activity-time">Mike Johnson • 8 minutes ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">📊</span>
+                <div class="activity-content">
+                  <div class="activity-title">Daily report generated</div>
+                  <div class="activity-time">System • 15 minutes ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">🎯</span>
+                <div class="activity-content">
+                  <div class="activity-title">Target achieved</div>
+                  <div class="activity-time">Team Alpha • 1 hour ago</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team Performance -->
+            <div style="margin-top: 2rem">
+              <h4 style="color: white; margin-bottom: 1rem">
+                Top Performers Today
+              </h4>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span>👨‍💼 Debajyoti Mondal</span>
+                  <span>32 calls</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 95%"></div>
+                </div>
+              </div>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span>👩‍💼 Aniket Dey</span>
+                  <span>28 calls</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 82%"></div>
+                </div>
+              </div>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span>👨‍💼 Roni Mukherjee</span>
+                  <span>25 calls</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 78%"></div>
+                </div>
+              </div>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span>👨‍💼 Tuhin Mondal</span>
+                  <span>22 calls</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

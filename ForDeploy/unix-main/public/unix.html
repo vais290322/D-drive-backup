@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Menu</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff8f0;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: #8b0000;
+    }
+    .menu {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed #ccc;
+    }
+    .item:last-child {
+      border-bottom: none;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #666;
+    }
+    .empty-category {
+      font-style: italic;
+      color: #999;
+      text-align: center;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>UNIX Restaurant & Dhaba – Bishwanathpur</h1>
+  <h3>Contact: 8016791627, 9734423221</h3>
+  <div class="menu" id="menu-container">
+    <div class="loading">Loading menu items...</div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetch categories
+        const categoriesResponse = await fetch('/api/categories');
+        const categories = await categoriesResponse.json();
+        
+        // Fetch available items only
+        const itemsResponse = await fetch('/api/items?showAll=false');
+        const items = await itemsResponse.json();
+        
+        // Group items by category
+        const itemsByCategory = {};
+        categories.forEach(category => {
+          itemsByCategory[category.id] = [];
+        });
+        
+        items.forEach(item => {
+          if (item.category_id && itemsByCategory[item.category_id]) {
+            itemsByCategory[item.category_id].push(item);
+          }
+        });
+        
+        // Generate menu HTML
+        const menuContainer = document.getElementById('menu-container');
+        menuContainer.innerHTML = '';
+        
+        categories.forEach(category => {
+          const categoryItems = itemsByCategory[category.id] || [];
+          
+          // Only display categories that have available items
+          if (categoryItems.length > 0) {
+            const sectionElement = document.createElement('div');
+            sectionElement.className = 'section';
+            
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = category.name;
+            sectionElement.appendChild(titleElement);
+            
+            categoryItems.forEach(item => {
+              const itemElement = document.createElement('div');
+              itemElement.className = 'item';
+              itemElement.innerHTML = `<span>${item.name}</span><span>${item.price}</span>`;
+              sectionElement.appendChild(itemElement);
+            });
+            
+            menuContainer.appendChild(sectionElement);
+          }
+        });
+        
+        // If no items are available
+        if (menuContainer.children.length === 0) {
+          menuContainer.innerHTML = '<div class="empty-category">No menu items available at the moment. Please check back later.</div>';
+        }
+      } catch (error) {
+        console.error('Error loading menu:', error);
+        document.getElementById('menu-container').innerHTML = '<div class="empty-category">Failed to load menu. Please try again later.</div>';
+      }
+    });
+  </script>
+</body>
+</html>

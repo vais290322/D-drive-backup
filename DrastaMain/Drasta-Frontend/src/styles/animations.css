@@ -1,0 +1,32 @@
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.page-transition {
+  animation: slideInFromTop 0.4s ease-out forwards;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.card-transition {
+  animation: slideInFromTop 0.4s ease-out forwards;
+  animation-delay: calc(var(--card-index) * 0.1s);
+  opacity: 0;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem;
+}

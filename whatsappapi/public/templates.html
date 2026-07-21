@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Templates – WhatsApp Controller</title>
+    <meta name="description"
+        content="Create, edit, and delete WhatsApp message templates with dynamic variable support." />
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3">🏠 Dashboard</a>
+                <a href="/send.html?v=3">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html">📊 History</a>
+                <a href="/templates.html" class="active">📋 Templates</a>
+                <a href="/api.html">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-header"
+                style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <h2>Message Templates</h2>
+                    <p>Use <code style="color:var(--accent)">{{variableName}}</code> for dynamic values</p>
+                </div>
+                <button id="newTemplateBtn" class="btn btn-primary">+ New Template</button>
+            </div>
+
+            <div id="alertBox" class="alert"></div>
+
+            <div id="templateList" class="template-list">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p>No templates yet. Create your first one!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create / Edit Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">New Template</h3>
+                <button class="modal-close" id="modalClose">Ã—</button>
+            </div>
+            <div id="modalAlert" class="alert"></div>
+            <form id="templateForm">
+                <input type="hidden" id="editId" />
+                <div class="form-group">
+                    <label for="tplName">Template Name</label>
+                    <input id="tplName" type="text" class="form-control" placeholder="e.g. Order Ready" required />
+                </div>
+                <div class="form-group">
+                    <label for="tplBody">Message Body</label>
+                    <textarea id="tplBody" class="form-control" rows="5"
+                        placeholder="Hello {{name}}, your order {{orderId}} is ready!" required></textarea>
+                    <p class="var-hint">Use <code>{{variableName}}</code> to insert dynamic values at send time.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button type="submit" id="saveBtn" class="btn btn-primary btn-full">Save Template</button>
+                    <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        requireAuth();
+        document.getElementById('userEmail').textContent = localStorage.getItem('email') || '';
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            clearSession(); window.location.href = '/index.html';
+        });
+
+        let templates = [];
+
+        async function loadTemplates() {
+            const { ok, data } = await apiFetch('/templates');
+            if (!ok) return showAlert('alertBox', 'Failed to load templates', 'error');
+            templates = data.templates || [];
+            renderTemplates();
+        }
+
+        function renderTemplates() {
+            const list = document.getElementById('templateList');
+            if (templates.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p>No templates yet. Create your first one!</p>
+        </div>`;
+                return;
+            }
+            list.innerHTML = templates.map(t => `
+        <div class="template-item">
+          <div class="template-info">
+            <div class="template-name">📋 ${escHtml(t.name)}</div>
+            <div class="template-body">${escHtml(t.body)}</div>
+          </div>
+          <div class="template-actions">
+            <button class="btn btn-secondary btn-sm" onclick="openEdit('${t._id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTemplate('${t._id}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function escHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Modal
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.getElementById('templateForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('modalTitle').textContent = 'New Template';
+            hideAlert('modalAlert');
+        }
+
+        document.getElementById('newTemplateBtn').addEventListener('click', () => {
+            closeModal();
+            openModal();
+        });
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        });
+
+        function openEdit(id) {
+            const t = templates.find(t => t._id === id);
+            if (!t) return;
+            document.getElementById('modalTitle').textContent = 'Edit Template';
+            document.getElementById('editId').value = t._id;
+            document.getElementById('tplName').value = t.name;
+            document.getElementById('tplBody').value = t.body;
+            openModal();
+        }
+
+        async function deleteTemplate(id) {
+            if (!confirm('Delete this template?')) return;
+            const { ok, data } = await apiFetch(`/templates/${id}`, { method: 'DELETE' });
+            if (ok) {
+                showAlert('alertBox', '✅ Template deleted', 'success');
+                await loadTemplates();
+            } else {
+                showAlert('alertBox', data.message || 'Failed to delete', 'error');
+            }
+        }
+
+        document.getElementById('templateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert('modalAlert');
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Savingâ€¦';
+
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('tplName').value.trim();
+            const body = document.getElementById('tplBody').value.trim();
+
+            const method = id ? 'PUT' : 'POST';
+            const path = id ? `/templates/${id}` : '/templates';
+
+            const { ok, data } = await apiFetch(path, { method, body: { name, body } })
+                .catch((err) => ({ ok: false, data: { message: err.message } }));
+
+            if (ok) {
+                closeModal();
+                showAlert('alertBox', `✅ Template ${id ? 'updated' : 'created'} successfully`, 'success');
+                await loadTemplates();
+            } else {
+                showAlert('modalAlert', data.message || 'Failed to save', 'error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Save Template';
+        });
+
+        loadTemplates();
+    </script>
+</body>
+
+</html>

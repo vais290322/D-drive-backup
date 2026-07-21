@@ -1,0 +1,44 @@
+/* Import this file in your AppSidebar.jsx or in a global CSS file */
+
+.sidebar-custom.sidebar-dark {
+  /* background: linear-gradient(to bottom, #6b21a8, #4338ca) !important; */
+  background: linear-gradient(to bottom, ##25a621, ##25a621) !important;
+  color: white !important;
+}
+
+.sidebar-custom.sidebar-dark [data-sidebar-content] {
+  /* background: linear-gradient(to bottom, #6b21a8, #4338ca) !important; */
+  background: linear-gradient(to bottom, ##25a621, ##25a621) !important;
+  color: green !important;
+}
+
+.sidebar-custom.sidebar-dark [data-sidebar-header] {
+  /* background-color: #6b21a8 !important; */
+  background-color: ##21a692 !important;
+  color: white !important;
+}
+
+.sidebar-custom.sidebar-dark [data-sidebar-rail] {
+  /* background-color: #6b21a8 !important; */
+  background-color: #21a692 !important;
+  color: white !important;
+}
+
+/* Override any internal component styles */
+.sidebar-custom.sidebar-dark * {
+  
+    /* --sidebar-background:  273 41.9% 75.7%;   */
+    --sidebar-background:  273 41.9% 75.7%;
+
+    --sidebar-foreground: 274 59.6% 38.8%;           
+    --sidebar-primary: 240 5.9% 10%;                 
+    --sidebar-primary-foreground: 0 0% 98%; 
+    --sidebar-accent-foreground: 0 0% 100%;
+  
+
+   
+    
+
+  
+ 
+}

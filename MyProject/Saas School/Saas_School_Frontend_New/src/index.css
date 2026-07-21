@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --radius: 0.5rem
+  ;
+    /* --sidebar-background: 216 93.2% 23.1%; */
+    /* --sidebar-background: 298 40% 23.5%; */
+    /* --sidebar-background: 273 41.9% 75.7%;               */
+    --sidebar-background: 241 62.6% 11.8%;              
+    /* --sidebar-foreground: 240 5.3% 26.1%; */
+    /* --sidebar-foreground: 360 100% 100%; */
+    /* --sidebar-foreground: 216 63.8% 56.7%; */
+    /* --sidebar-foreground: 274 59.6% 38.8%;            */
+    --sidebar-foreground: 51 62.6% 43.1%;           
+    --sidebar-primary: 240 5.9% 10%;                 
+    --sidebar-primary-foreground: 0 0% 98%;          
+    /* --sidebar-accent: 240 4.8% 95.9%; */
+    /* --sidebar-accent: 42 83.9% 48.8%; */
+    /* --sidebar-accent-foreground: 42 83.9% 48.8%; */
+    --sidebar-accent-foreground: 0 0% 100%;                 
+    /* --sidebar-border: 220 13% 91%; */
+    /* --sidebar-ring: 217.2 91.2% 59.8% */
+  }
+
+}
+
+.light {
+  /* background-color: #ffffff; */
+  background-color: #f4f5f7;
+  color: #000000;
+  
+}
+
+.dark {
+  background-color: #000000;
+  color: #cbcacf;
+  border-color: white;
+}
+*{
+  border-color:#c4a7db;
+}
+
+/* hide scrollbar for chrome */
+::-webkit-scrollbar{
+  display:none
+}
+
+/* Hide scrollbars for Firefox */
+ *{scrollbar-width: none;} 
+
+
+/* Hide scrollbars for Internet Explorer and Edge */
+*{
+  -ms-overflow-style: none; 
+}
+
+body {
+  @apply font-poppins; /* Use the 'font-poppins' class */
+}
+
+
+/* index.css */
+/* input {
+  background-color: #ffffff; 
+  color: black; 
+  border: 1px solid #ddd; 
+  padding: 0.5rem; 
+  border-radius: 4px; 
+}
+
+input:focus {
+  background-color: #ffffff; 
+  border-color: #007bff; 
+  outline: none; 
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+} */
+
+/* .dark input {
+  background-color: #1F2937; 
+  color: #ffffff; 
+  border: 1px solid #444; 
+} */
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  color: black; 
+  background: white; 
+  cursor: pointer; 
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  color: #007bff; 
+}
+
+.dark input[type="date"] {
+  appearance: none; 
+  -webkit-appearance: none; 
+}
+
+
+/* Add this to your global CSS file */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme scrollbar */
+.light .custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.light .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.light .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

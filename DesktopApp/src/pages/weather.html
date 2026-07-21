@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/weather.css">
+  <title>Weather - Telecells Manager</title>
+</head>
+<body>
+  <section id="weather" class="page">
+    <h1>Weather Information</h1>
+    <div class="weather-container">
+      <div class="weather-search">
+        <input type="text" id="city-input" placeholder="Enter city name...">
+        <button id="search-weather-btn" class="primary-btn">Search</button>
+      </div>
+      <div id="weather-card" class="weather-card">
+        <div class="weather-header">
+          <h2 id="weather-city">City Name</h2>
+          <p id="weather-date">Date</p>
+        </div>
+        <div class="weather-info">
+          <div class="weather-temp">
+            <h1 id="weather-temp-value">--°C</h1>
+            <p id="weather-description">Description</p>
+          </div>
+          <div class="weather-icon">
+            <img id="weather-icon-img" src="" alt="Weather Icon">
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">
+            <span class="label">Humidity</span>
+            <span id="weather-humidity" class="value">--%</span>
+          </div>
+          <div class="weather-detail">
+            <span class="label">Wind</span>
+            <span id="weather-wind" class="value">-- m/s</span>
+          </div>
+          <div class="weather-detail">
+            <span class="label">Pressure</span>
+            <span id="weather-pressure" class="value">-- hPa</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="forecast-container" id="forecast-container">
+        <!-- Forecast items will be added here -->
+      </div>
+      
+      <div class="weather-map" id="weather-map">
+        <!-- Weather map will be displayed here -->
+      </div>
+    </div>
+  </section>
+  
+  <script src="../js/weather.js"></script>
+</body>
+</html>

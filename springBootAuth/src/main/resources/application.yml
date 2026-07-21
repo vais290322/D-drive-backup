@@ -1,0 +1,6 @@
+marg:
+  api:
+    base-url: https://corporate.margerp.com/api/eOnlineData
+    company-code: DSPHARMA3   # from email
+    marg-id: 423875         # Marg business ID
+    password: N9JB7B4H0QHV   # API Password from email

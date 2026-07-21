@@ -1,0 +1,32 @@
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+out/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# Cache
+.cache/
+
+# VS Code
+.vscode/
+
+# npm
+npm-debug.log*
+
+# Uploads
+public/uploads/
+uploads/
+
+# Electron
+release/
+
+# Other common ignores
+.exe    

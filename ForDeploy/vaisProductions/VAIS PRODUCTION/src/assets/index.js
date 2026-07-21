@@ -1,0 +1,27 @@
+import AboutImg1 from "./about img1.png";
+import AboutImg2 from "./about img2.png";
+import BannerImg1 from "./banner img1.png";
+import BannerImg2 from "./banner img2.png";
+import ContactImg from "./contact.png";
+import FooterLogoImg from "./footer logo.png";
+import LogoImg from "./logo.png";
+import NotFoundImg from "./notfound.png";
+import PlaystoreImg from "./playstore.png";
+import PortfolioImg1 from "./portfolio img1.png";
+import PortfolioImg2 from "./portfolio img2.png";   
+import PortfolioImg3 from "./portfolio img3.png";
+import PortfolioImg4 from "./portfolio img4.png";
+import PortfolioImg5 from "./portfolio img5.png";
+import PortfolioImg6 from "./portfolio img6.png";
+import PuzzleImg from "./puzzle.PNG";
+import ReviewImg from "./review.PNG";
+import RocketImg from "./rocket.PNG";
+import ServiceImg from "./service img1.png";
+import ServicePoint1 from "./service point1.png";
+import ServicePoint2 from "./service point2.png";
+import ServicePoint3 from "./service point3.png";
+import TestimonialImg from "./testimonial page.png";
+import TimeImg from "./time.PNG";
+import VaisProductionIconImg from "./Vais Productions-icon.png";
+
+export { AboutImg1, AboutImg2, BannerImg1, BannerImg2, ContactImg, FooterLogoImg, LogoImg, NotFoundImg, PlaystoreImg, PortfolioImg1, PortfolioImg2, PortfolioImg3, PortfolioImg4, PortfolioImg5, PortfolioImg6, PuzzleImg, ReviewImg, RocketImg, ServiceImg, ServicePoint1, ServicePoint2, ServicePoint3, TestimonialImg, TimeImg, VaisProductionIconImg };

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.span-text {
+    width: 46rem;
+    
+}
+
+.pricing-plan {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: box-shadow 0.3s;
+  }
+  .pricing-plan:hover {
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  .pricing-plan .price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2a9d8f;
+  }
+  .pricing-plan .plan-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #264653;
+  }
+  .pricing-plan ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .pricing-plan ul li {
+    margin: 10px 0;
+    text-align: left;
+  }
+  .extra-content {
+    display: none; /* Hidden by default */
+  }
+
+
+  
+@media (max-width: 768px) {
+  .span-text {
+    width: 36rem; /* Adjust the width for tablets */
+  }
+}
+
+@media (max-width: 576px) {
+  .span-text {
+    width: 100%; /* Make it full width on small screens */
+  }
+}
+  
+  
+
+    </style>
+</head>
+
+<body>
+    <div id="main-wrapper">
+        <div class="col-lg-12">
+            <div class="wrapper">
+
+                <div class="header container my-5">
+                    <h2 class="">Membership plan</h2>
+                    <p class="span-text">In the digital age, your website is the face your business. It's the first imprassion you make or potantial
+                        customers and crucial tool for engaging with your audience</p>
+                </div>
+    
+                <div>
+                <div class="container my-5">
+                    <div class="row row-gap-0 row-gap-sm-2">
+                      
+                      <!-- Basic Plan -->
+                      <div class="col-md-3">
+                        <div class="pricing-plan">
+                          <h3 class="plan-title">Starter Package</h3>
+                          <p class="price">INR 4991</p>
+                          <ul>
+                            <li>1. Creation of a simple & responsive 5-page website.</li>
+                            <li>2. Design Customization to match your brand.</li>
+                            <li>3. Domain registration for one year.</li>
+                            <li>4. Hosting for one year.</li>
+                            <div class="extra-content">
+                              <li>5. Email Support.</li>
+                              <li>6. Exclusive blog access.</li>
+                            </div>
+                          </ul>
+                          <button class="btn btn-link" onclick="toggleContent(this)">Show More</button>
+                          <a href="#" class="btn btn-primary mt-1">Choose Plan</a>
+                        </div>
+                      </div>
+                
+                      <!-- Standard Plan -->
+                      <div class="col-md-3 ">
+                        <div class="pricing-plan">
+                          <h3 class="plan-title">Business Solutions</h3>
+                          <p class="price">INR 7999</p>
+                          <ul>
+                            <li>1. Creation of a professional & responsive 10-page website.</li>
+                            <li>2. Custom design to align with your brand.</li>
+                            <li>3. Domain registration for one year.</li>
+                            <li>4. Hosting for one year.</li>
+                            <div class="extra-content">
+                              <li>5. Monthly newsletters.</li>
+                              <li>6. Access to premium resources.</li>
+                            </div>
+                          </ul>
+                          <button class="btn btn-link" onclick="toggleContent(this)">Show More</button>
+                          <a href="#" class="btn btn-primary mt-1">Choose Plan</a>
+                        </div>
+                      </div>
+                
+                      <!-- Premium Plan -->
+                      <div class="col-md-3 ">
+                        <div class="pricing-plan">
+                          <h3 class="plan-title">E-commerce Plus</h3>
+                          <p class="price">INR 14999</p>
+                          <ul>
+                            <li>1. Creation of a robust e-commerce website with up to 100 producs.</li>
+                            <li>2. Custom e-commerce design.</li>
+                            <li>3. Domain registration for one year.</li>
+                            <li>4. E-commerce hosting one year.</li>
+                            <li>5. E-commerce hosting one year.</li>
+                            <div class="extra-content">
+                              <li>5. Plant identification support.</li>
+                              <li>6. Exclusive garden design tips.</li>
+                              <li>7. 24/7 support.</li>
+                            </div>
+                          </ul>
+                          <button class="btn btn-link" onclick="toggleContent(this)">Show More</button>
+                          <a href="#" class="btn btn-primary mt-1">Choose Plan</a>
+                        </div>
+                      </div>
+                
+                      <!-- Custom Plan -->
+                      <div class="col-md-3">
+                        <div class="pricing-plan">
+                          <h3 class="plan-title">Custom Web Development</h3>
+                          <p class="price">INR 20000</p>
+                          <ul>
+                            <li>1. Fully custom website development tailored to your unique needs.</li>
+                            <li>2. Custom e-commerce design.</li>
+                            <li>3. Premium design and branding.</li>
+                            <li>4. Premium design and branding.</li>
+                            <div class="extra-content">
+                              <li>5. Personalized plant care guidance.</li>
+                              <li>6. Access to limited edition plants.</li>
+                            </div>
+                          </ul>
+                          <button class="btn btn-link" onclick="toggleContent(this)">Show More</button>
+                          <a href="#" class="btn btn-primary mt-1">Choose Plan</a>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+               </div> 
+
+            </div>
+
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        function toggleContent(button) {
+    const extraContent = button.previousElementSibling.querySelector('.extra-content');
+    if (extraContent.style.display === "none") {
+      extraContent.style.display = "block";
+      button.textContent = "Show Less";
+    } else {
+      extraContent.style.display = "none";
+      button.textContent = "Show More";
+    }
+  }
+    </script>
+</body>
+
+</html>

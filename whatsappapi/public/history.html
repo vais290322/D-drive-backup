@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Message History – WhatsApp Controller</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .filters .form-control {
+            width: auto;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .hist-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .hist-table th {
+            padding: 10px 14px;
+            text-align: left;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .hist-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: top;
+        }
+
+        .hist-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pill-sent {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--success);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .pill-failed {
+            background: rgba(255, 76, 110, 0.15);
+            color: var(--danger);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .pill-mode {
+            background: rgba(108, 71, 255, 0.15);
+            color: #a08cff;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            white-space: nowrap;
+        }
+
+        .pill-api {
+            background: rgba(245, 166, 35, 0.12);
+            color: var(--warning);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            white-space: nowrap;
+        }
+
+        .msg-body {
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-muted);
+        }
+
+        .error-txt {
+            color: var(--danger);
+            font-size: 0.78rem;
+        }
+
+        .pager {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pager span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3">🏠 Dashboard</a>
+                <a href="/send.html?v=3">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html" class="active">📊 History</a>
+                <a href="/templates.html">📋 Templates</a>
+                <a href="/api.html">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-header"
+                style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <h2>Message History</h2>
+                    <p>Complete log of all sent messages</p>
+                </div>
+                <button id="exportBtn" class="btn btn-secondary btn-sm">⬇️ Export CSV</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <input id="searchPhone" type="text" class="form-control" placeholder="🔍 Search by phone…" />
+                <select id="filterStatus" class="form-control">
+                    <option value="">All statuses</option>
+                    <option value="sent">✅ Sent</option>
+                    <option value="failed">❌ Failed</option>
+                </select>
+                <select id="filterMode" class="form-control">
+                    <option value="">All channels</option>
+                    <option value="custom">✉️ Custom</option>
+                    <option value="template">📋 Template</option>
+                    <option value="bulk">📤 Bulk</option>
+                    <option value="api">🔑 API</option>
+                </select>
+                <button id="applyFilter" class="btn btn-primary btn-sm">Apply</button>
+                <button id="resetFilter" class="btn btn-secondary btn-sm">Reset</button>
+            </div>
+
+            <!-- Table -->
+            <div class="card" style="padding:0;overflow:hidden;">
+                <div style="overflow-x:auto;">
+                    <table class="hist-table">
+                        <thead>
+                            <tr>
+                                <th>Date / Time</th>
+                                <th>To</th>
+                                <th>Channel</th>
+                                <th>Source</th>
+                                <th>Template</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="histBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">Loading…
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pager">
+                <span id="pageInfo">—</span>
+                <div style="display:flex;gap:8px;">
+                    <button id="prevPage" class="btn btn-secondary btn-sm">Prev</button>
+                    <button id="nextPage" class="btn btn-secondary btn-sm">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        requireAuth();
+        document.getElementById('userEmail').textContent = localStorage.getItem('email') || '';
+        document.getElementById('logoutBtn').addEventListener('click', () => { clearSession(); window.location.href = '/index.html'; });
+
+        let currentPage = 1;
+        let allLogs = []; // for export
+        let totalPages = 1;
+
+        function getFilters() {
+            return {
+                search: document.getElementById('searchPhone').value.trim(),
+                status: document.getElementById('filterStatus').value,
+                mode: document.getElementById('filterMode').value,
+            };
+        }
+
+        function escHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        function modeLabel(m) {
+            const map = {
+                custom: '&#x2709;&#xFE0F; custom',
+                template: '&#x1F4CB; template',
+                bulk: '&#x1F4E4; bulk',
+                api: '&#x1F511; API'
+            };
+            return map[m] || m;
+        }
+
+        async function loadHistory(page = 1) {
+            const f = getFilters();
+            const params = new URLSearchParams({ page, limit: 20, ...f });
+            Object.keys(f).forEach(k => { if (!f[k]) params.delete(k); });
+
+            const { ok, data } = await apiFetch(`/history?${params}`);
+            const tbody = document.getElementById('histBody');
+            if (!ok) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--danger)">Failed to load</td></tr>';
+                return;
+            }
+
+            allLogs = data.logs;
+            currentPage = data.page;
+            totalPages = data.pages;
+
+            if (!data.logs.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">No messages found</td></tr>';
+                document.getElementById('pageInfo').textContent = '0 messages';
+                return;
+            }
+
+            tbody.innerHTML = data.logs.map(l => `
+        <tr>
+          <td style="white-space:nowrap;color:var(--text-muted)">
+            ${new Date(l.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}<br>
+            <span style="font-size:0.78rem">${new Date(l.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+          </td>
+          <td style="font-family:monospace;font-size:0.83rem">${escHtml(l.to)}</td>
+          <td><span class="pill-mode">${modeLabel(l.mode)}</span></td>
+          <td style="font-size:0.78rem;color:var(--text-muted)">${l.source === 'api' ? '<span class="pill-api">API</span>' : 'Dashboard'}</td>
+          <td style="font-size:0.82rem;color:var(--text-muted)">${l.templateName ? escHtml(l.templateName) : '—'}</td>
+          <td>
+            <div class="msg-body" title="${escHtml(l.body)}">${escHtml(l.body)}</div>
+            ${l.error ? `<div class="error-txt">&#x26A0;&#xFE0F; ${escHtml(l.error)}</div>` : ''}
+          </td>
+          <td><span class="pill-${l.status}">${l.status === 'sent' ? '&#x2705; sent' : '&#x274C; failed'}</span></td>
+        </tr>`).join('');
+
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} \u2022 ${data.total} total`;
+            document.getElementById('prevPage').disabled = currentPage <= 1;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages;
+        }
+
+        document.getElementById('applyFilter').addEventListener('click', () => loadHistory(1));
+        document.getElementById('resetFilter').addEventListener('click', () => {
+            document.getElementById('searchPhone').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterMode').value = '';
+            loadHistory(1);
+        });
+        document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) loadHistory(currentPage - 1); });
+        document.getElementById('nextPage').addEventListener('click', () => { if (currentPage < totalPages) loadHistory(currentPage + 1); });
+
+        // Filter on Enter
+        document.getElementById('searchPhone').addEventListener('keydown', e => { if (e.key === 'Enter') loadHistory(1); });
+
+        // ── Export CSV ────────────────────────────────────────────────────────────
+        document.getElementById('exportBtn').addEventListener('click', async () => {
+            const f = getFilters();
+            const params = new URLSearchParams({ limit: 5000, ...f });
+            Object.keys(f).forEach(k => { if (!f[k]) params.delete(k); });
+            const { ok, data } = await apiFetch(`/history?${params}`);
+            if (!ok) return;
+            const lines = ['date,to,mode,source,template,status,error,message'];
+            data.logs.forEach(l => {
+                const d = new Date(l.createdAt).toISOString();
+                lines.push([d, l.to, l.mode, l.source, l.templateName || '', l.status, (l.error || '').replace(/,/g, ';'), `"${(l.body || '').replace(/"/g, '""')}"`].join(','));
+            });
+            const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `message_history_${Date.now()}.csv`;
+            a.click();
+        });
+
+        loadHistory();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,504 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – WhatsApp Controller</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media(max-width:900px) {
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .stat-card {
+            background: rgba(19, 19, 26, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--accent-color, var(--primary));
+            opacity: 0.2;
+            filter: blur(24px);
+            transform: translate(16px, -16px);
+        }
+
+        .stat-card .lbl {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .stat-card .num {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 6px 0 2px;
+            color: var(--accent-color, var(--text));
+        }
+
+        .stat-card .sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        @media(max-width:900px) {
+            .mode-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .mode-pill {
+            background: rgba(30, 30, 42, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .mode-pill .m-count {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .mode-pill .m-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .recent-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .recent-table th {
+            padding: 8px 12px;
+            text-align: left;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .recent-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .pill-sent {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--success);
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pill-failed {
+            background: rgba(255, 76, 110, 0.15);
+            color: var(--danger);
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pill-mode {
+            background: rgba(108, 71, 255, 0.15);
+            color: #a08cff;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3" class="active">🏠 Dashboard</a>
+                <a href="/send.html?v=3">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html">📊 History</a>
+                <a href="/templates.html">📋 Templates</a>
+                <a href="/api.html">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <p id="greetLine">Welcome back!</p>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stat-grid">
+                <div class="stat-card" style="--accent-color:#00d4aa">
+                    <div class="lbl">Total Sent</div>
+                    <div class="num" id="sTotalSent">—</div>
+                    <div class="sub">All time</div>
+                </div>
+                <div class="stat-card" style="--accent-color:#ff4c6e">
+                    <div class="lbl">Total Failed</div>
+                    <div class="num" id="sTotalFailed">—</div>
+                    <div class="sub">All time</div>
+                </div>
+                <div class="stat-card" style="--accent-color:#6c47ff">
+                    <div class="lbl">Today Sent</div>
+                    <div class="num" id="sTodaySent">—</div>
+                    <div class="sub">Since 00:00</div>
+                </div>
+                <div class="stat-card" style="--accent-color:#f5a623">
+                    <div class="lbl">Today Failed</div>
+                    <div class="num" id="sTodayFailed">—</div>
+                    <div class="sub">Since 00:00</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Left: WhatsApp connection -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">WhatsApp Connection</span>
+                        <span id="statusBadge" class="badge badge-disconnected">Disconnected</span>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div id="qrBox" class="qr-box" style="display:none">
+                        <img id="qrImg" src="" alt="QR" />
+                        <p>Open WhatsApp â†’ Linked Devices â†’ Link a Device</p>
+                    </div>
+
+                    <!-- Connected -->
+                    <div id="readyBox" style="display:none;text-align:center;padding:24px 0">
+                        <div style="font-size:2.5rem">✅</div>
+                        <p style="font-weight:600;margin-top:8px;">WhatsApp Connected</p>
+                        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Ready to send messages</p>
+                    </div>
+
+                    <!-- Initialising spinner -->
+                    <div id="initBox" style="display:none;text-align:center;padding:28px 0">
+                        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px"></div>
+                        <p style="color:var(--text-muted);font-size:0.88rem" id="initMsg">Starting WhatsAppâ€¦</p>
+                        <p style="color:var(--text-muted);font-size:0.78rem;margin-top:4px">This may take up to 30
+                            seconds on first run</p>
+                    </div>
+
+                    <!-- Error -->
+                    <div id="errorBox" style="display:none;text-align:center;padding:20px 0">
+                        <div style="font-size:2rem">&#x26A0;&#xFE0F;</div>
+                        <p style="color:var(--danger);font-size:0.9rem;margin-top:8px;font-weight:600">Connection Failed
+                        </p>
+                        <p id="errorMsg"
+                            style="color:var(--text-muted);font-size:0.82rem;margin-top:6px;padding:0 12px"></p>
+                    </div>
+
+                    <!-- Idle -->
+                    <div id="idleBox" style="text-align:center;padding:24px 0">
+                        <div style="font-size:2.5rem">📱</div>
+                        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px">Click Connect to generate QR
+                        </p>
+                    </div>
+
+                    <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+                        <button id="connectBtn" class="btn btn-primary btn-full">Connect WhatsApp</button>
+                        <button id="retryBtn" class="btn btn-secondary btn-full" style="display:none">&#x1F504;
+                            Retry</button>
+                        <button id="disconnectBtn" class="btn btn-danger" style="display:none">Disconnect</button>
+                        <button id="changeAccountBtn" class="btn btn-secondary"
+                            style="display:none;border-color:#f5a623;color:#f5a623"
+                            title="Log out and scan a new QR code for a different WhatsApp account">&#x1F501; Change
+                            Account</button>
+                    </div>
+                </div>
+
+                <!-- Right: message by mode + API key -->
+                <div>
+                    <div class="card" style="margin-bottom:20px;">
+                        <div class="card-header"><span class="card-title">Messages by Channel</span></div>
+                        <div class="mode-grid">
+                            <div class="mode-pill">
+                                <div class="m-count" id="mCustom">—</div>
+                                <div class="m-lbl">Custom</div>
+                            </div>
+                            <div class="mode-pill">
+                                <div class="m-count" id="mTemplate">—</div>
+                                <div class="m-lbl">📋 Template</div>
+                            </div>
+                            <div class="mode-pill">
+                                <div class="m-count" id="mBulk">—</div>
+                                <div class="m-lbl">📤 Bulk</div>
+                            </div>
+                            <div class="mode-pill">
+                                <div class="m-count" id="mApi">—</div>
+                                <div class="m-lbl">🔑 API</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Your API Key</span></div>
+                        <div class="api-key-box">
+                            <code id="apiKeyDisplay">—</code>
+                            <button id="copyKeyBtn" class="btn btn-secondary btn-sm">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent messages -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Recent Messages</span>
+                    <a href="/history.html" class="btn btn-secondary btn-sm">View All â†’</a>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="recent-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>To</th>
+                                <th>Channel</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBody">
+                            <tr>
+                                <td colspan="5" style="color:var(--text-muted);text-align:center;padding:24px">
+                                    Loading&#x2026;
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/api.js"></script>
+    <script>
+        requireAuth();
+        const email = localStorage.getItem('email') || '';
+        document.getElementById('userEmail').textContent = email;
+        document.getElementById('greetLine').textContent = `Welcome back, ${email}`;
+        document.getElementById('apiKeyDisplay').textContent = localStorage.getItem('apiKey') || '—';
+
+        document.getElementById('logoutBtn').addEventListener('click', () => { clearSession(); window.location.href = '/index.html'; });
+        document.getElementById('copyKeyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(localStorage.getItem('apiKey') || '');
+            const b = document.getElementById('copyKeyBtn');
+            b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy', 1500);
+        });
+
+        // â”€â”€ Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function loadStats() {
+            const { ok, data } = await apiFetch('/history/stats');
+            if (!ok) return;
+            const s = data.stats;
+            document.getElementById('sTotalSent').textContent = s.totalSent;
+            document.getElementById('sTotalFailed').textContent = s.totalFailed;
+            document.getElementById('sTodaySent').textContent = s.todaySent;
+            document.getElementById('sTodayFailed').textContent = s.todayFailed;
+            document.getElementById('mCustom').textContent = s.byMode.custom || 0;
+            document.getElementById('mTemplate').textContent = s.byMode.template || 0;
+            document.getElementById('mBulk').textContent = s.byMode.bulk || 0;
+            document.getElementById('mApi').textContent = s.byMode.api || 0;
+        }
+
+        // â”€â”€ Recent messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function loadRecent() {
+            const { ok, data } = await apiFetch('/history?limit=8');
+            const tbody = document.getElementById('recentBody');
+            if (!ok || !data.logs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted);text-align:center;padding:24px">No messages yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.logs.map(l => `
+        <tr>
+          <td style="color:var(--text-muted);white-space:nowrap">${new Date(l.createdAt).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' })}</td>
+          <td style="font-family:monospace">${l.to}</td>
+          <td><span class="pill-mode">${l.mode}</span></td>
+          <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted)">${escHtml(l.body)}</td>
+          <td><span class="pill-${l.status}">${l.status}</span></td>
+        </tr>`).join('');
+        }
+
+        function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        loadStats();
+        loadRecent();
+
+        // â”€â”€ WhatsApp Connection State Machine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        let pollTimer = null;
+
+        function setBoxes(show) {
+            ['qrBox', 'readyBox', 'initBox', 'errorBox', 'idleBox'].forEach(id =>
+                document.getElementById(id).style.display = id === show ? 'block' : 'none'
+            );
+        }
+
+        function renderStatus(status, qr, error) {
+            const badge = document.getElementById('statusBadge');
+            const connectBtn = document.getElementById('connectBtn');
+            const retryBtn = document.getElementById('retryBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const changeAccountBtn = document.getElementById('changeAccountBtn');
+
+            // Reset all buttons
+            connectBtn.style.display = 'none';
+            retryBtn.style.display = 'none';
+            disconnectBtn.style.display = 'none';
+            changeAccountBtn.style.display = 'none';
+
+            switch (status) {
+                case 'ready':
+                    badge.className = 'badge badge-ready'; badge.textContent = 'Connected';
+                    setBoxes('readyBox');
+                    disconnectBtn.style.display = 'inline-flex';
+                    changeAccountBtn.style.display = 'inline-flex';
+                    break;
+
+                case 'qr':
+                    badge.className = 'badge badge-qr'; badge.textContent = 'Scan QR';
+                    if (qr) {
+                        setBoxes('qrBox');
+                        document.getElementById('qrImg').src = qr;
+                    } else {
+                        setBoxes('initBox');
+                        document.getElementById('initMsg').textContent = 'Waiting for QR code\u2026';
+                    }
+                    break;
+
+                case 'initializing':
+                    badge.className = 'badge badge-qr'; badge.textContent = 'Starting\u2026';
+                    setBoxes('initBox');
+                    document.getElementById('initMsg').textContent = 'Starting WhatsApp\u2026';
+                    break;
+
+                case 'authenticated':
+                    badge.className = 'badge badge-qr'; badge.textContent = 'Authenticating\u2026';
+                    setBoxes('initBox');
+                    document.getElementById('initMsg').textContent = 'Authenticating session\u2026';
+                    break;
+
+                case 'error':
+                    badge.className = 'badge badge-disconnected'; badge.textContent = 'Error';
+                    setBoxes('errorBox');
+                    document.getElementById('errorMsg').textContent = error || 'An unknown error occurred.';
+                    retryBtn.style.display = 'inline-flex';
+                    break;
+
+                default: // disconnected
+                    badge.className = 'badge badge-disconnected'; badge.textContent = 'Disconnected';
+                    setBoxes('idleBox');
+                    connectBtn.style.display = 'inline-flex';
+            }
+        }
+
+        const token = localStorage.getItem('token');
+        const socket = io({ auth: { token } });
+
+        socket.on('whatsapp_status', (data) => {
+            renderStatus(data.status, data.qr, data.error);
+        });
+
+        async function doConnect() {
+            const connectBtn = document.getElementById('connectBtn');
+            const retryBtn = document.getElementById('retryBtn');
+            connectBtn.style.display = 'none';
+            retryBtn.style.display = 'none';
+
+            // Show initialising immediately so user gets feedback
+            renderStatus('initializing', null, null);
+
+            const { ok, data } = await apiFetch('/api/whatsapp/connect', { method: 'POST' })
+                .catch(() => ({ ok: false, data: { status: 'error', error: 'Network error — is the server running?' } }));
+
+            if (ok) {
+                renderStatus(data.status, data.qr, data.error);
+            } else {
+                renderStatus('error', null, data.error || 'Failed to connect');
+            }
+        }
+
+        document.getElementById('connectBtn').addEventListener('click', doConnect);
+        document.getElementById('retryBtn').addEventListener('click', doConnect);
+
+        document.getElementById('disconnectBtn').addEventListener('click', async () => {
+            await apiFetch('/api/whatsapp/disconnect', { method: 'POST' });
+            renderStatus('disconnected', null, null);
+        });
+
+        document.getElementById('changeAccountBtn').addEventListener('click', async () => {
+            if (!confirm('This will log out your current WhatsApp account and show a new QR code to connect a different account. Continue?')) return;
+            const btn = document.getElementById('changeAccountBtn');
+            btn.textContent = 'Clearing\u2026';
+            btn.disabled = true;
+            const { ok } = await apiFetch('/api/whatsapp/change-account', { method: 'POST' });
+            btn.textContent = '\u{1F501} Change Account';
+            btn.disabled = false;
+            if (ok) {
+                // Immediately start a fresh connect so QR appears
+                doConnect();
+            }
+        });
+
+        // On page load, check existing status
+        (async () => {
+            const { ok, data } = await apiFetch('/api/whatsapp/status').catch(() => ({ ok: false, data: {} }));
+            if (!ok) return;
+            renderStatus(data.status, data.qr, data.error);
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Initiatives</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          background: #f4f4f4;
+        }
+        .category-block {
+          padding: 20px;
+          border-radius: 16px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+          margin-bottom: 40px;
+        }
+        .green { background-color: #d1fae5; }
+        .blue { background-color: #dbeafe; }
+        .yellow { background-color: #fef9c3; }
+
+        .category-title {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .category-desc {
+          color: #4b5563;
+          margin-bottom: 16px;
+        }
+
+        .event-card {
+          display: flex;
+          background: #fff;
+          border-radius: 12px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          padding: 12px;
+          margin-bottom: 16px;
+          gap: 12px;
+          align-items: center;
+        }
+
+        .event-card img {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 8px;
+        }
+
+        .event-title {
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .event-date {
+          font-size: 12px;
+          color: #6b7280;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="initiatives-container"></div>
+
+<script>
+    async function fetchInitiatives() {
+      try {
+        const response = await fetch('http://192.168.0.158:8080/api/v1/initiatives/grouped');
+        const data = await response.json();
+        renderInitiatives(data);
+      } catch (err) {
+        console.error('Failed to load initiatives:', err);
+      }
+    }
+
+    function getColorClass(index) {
+      const colors = ['green', 'blue', 'yellow'];
+      return colors[index % colors.length];
+    }
+
+    function renderInitiatives(data) {
+      const container = document.getElementById('initiatives-container');
+      container.innerHTML = '';
+
+      data.forEach((cat, idx) => {
+        const block = document.createElement('div');
+        block.className = `category-block ${getColorClass(idx)}`;
+
+        const title = document.createElement('h2');
+        title.className = 'category-title';
+        title.textContent = cat.categoryTitle;
+
+        const desc = document.createElement('p');
+        desc.className = 'category-desc';
+        desc.textContent = cat.categoryDescription;
+
+        const eventGrid = document.createElement('div');
+        eventGrid.className = 'grid';
+
+        cat.events.forEach(event => {
+          const card = document.createElement('div');
+          card.className = 'event-card';
+
+          const img = document.createElement('img');
+          img.src = event.imageUrl;
+          img.alt = event.title;
+
+          const textBox = document.createElement('div');
+          const eventTitle = document.createElement('h3');
+          eventTitle.className = 'event-title';
+          eventTitle.textContent = event.title;
+
+          const eventDate = document.createElement('p');
+          eventDate.className = 'event-date';
+          eventDate.textContent = `Date: ${event.date}`;
+
+          textBox.appendChild(eventTitle);
+          textBox.appendChild(eventDate);
+          card.appendChild(img);
+          card.appendChild(textBox);
+          eventGrid.appendChild(card);
+        });
+
+        block.appendChild(title);
+        block.appendChild(desc);
+        block.appendChild(eventGrid);
+        container.appendChild(block);
+      });
+    }
+
+    fetchInitiatives();
+</script>
+</body>
+
+<!--<p>A Vision Rooted in Compassion</p><p><br></p><p>Every night, millions of people go to bed with empty stomachs — a heartbreaking reality we’ve long refused to accept. At Drastha, we believe access to food is not a privilege, but a basic human right.</p><p>In early 2024, we launched the “Feeding Hope” campaign — an initiative designed to address the urgent issue of hunger among underprivileged communities. What began as a modest food distribution drive grew into a nationwide movement that reached over 100,000 people in need.</p><p><br></p><p>From Concept to Action: Delivering Real Results</p><p><br></p><p>Our campaign was built on three pillars:</p><ul><li>Nutrition: Providing healthy, balanced meals to children, elderly individuals, and families struggling with food insecurity.</li><li>Accessibility: Setting up mobile kitchens, food banks, and delivery programs in slums, rural areas, and crisis-hit regions.</li><li>Dignity: Serving food with empathy, respect, and a sense of community.</li><li>Thanks to our committed volunteers, generous donors, and strategic partners, we distributed over 100,000 meals across 12 districts, creating a ripple of hope and healing.</li></ul><p><br></p><p>The Impact in Numbers</p><p><br></p><p>Impact Area Result Meals Served100,000+ Families Supported35,000+ Children Helped12,000 Jobs Created for Women60+ Children Re-Enrolled in School1,200</p><ol><li>Each number isn’t just a stat — it’s a story of change, of someone regaining their strength, their smile, their sense of security. Real Voices. Real Impact.</li><li>\"I used to send my children to bed with just water. Now, they eat with a smile every day. That means everything to me.\"  — Rekha Devi, Mother of two, Uttar Pradesh</li><li>\"Volunteering with ‘Feeding Hope’ taught me the value of service. I’ve seen lives change — and mine too.\"  — Arjun Mehta, College Student Volunteer</li></ol><p><br></p><p><strong><em>A Milestone — But Not the Finish Line</em></strong></p><p><br></p><p>We celebrate this milestone not as a destination, but a starting point. In 2025, we aim to:</p><p>Expand the campaign to five more states</p><p>Integrate nutrition education workshops</p><p>Launch community kitchens run by local women</p><p>Because ending hunger isn’t about charity — it’s about justice.</p><p><br></p><p>How You Can Help</p><p><br></p><p><br></p><p><br></p><p>Want to join the movement? Here’s how:</p><p>Donate: Every ₹100 you give feeds a family for a day.</p><p>Volunteer: Be part of our next food drive or community event.</p><p>Partner: Collaborate with us as a sponsor, logistics partner, or content creator.</p><p><br></p><p>Visit www.drastha.org to learn more.</p><p>Together, We Can Feed Hope</p><p><br></p><p>Food is more than sustenance. It’s dignity, strength, and the foundation of a better tomorrow. Through “Feeding Hope,” we’ve seen what’s possible when compassion meets action. Let’s keep the momentum going.</p><p>Because when we feed hope — we grow a future where no one is left behind.</p>-->
+</html>

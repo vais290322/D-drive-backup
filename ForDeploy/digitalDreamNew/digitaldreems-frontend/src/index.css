@@ -1,0 +1,295 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 42 74% 58%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 42 74% 58%;
+    --accent-foreground: 0 0% 10%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 42 74% 58%;
+    --chart-1: 42 74% 58%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 47 96% 53%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 42 74% 58%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 42 74% 48%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 42 74% 65%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 42 74% 40%;
+    --sidebar-ring: 42 74% 48%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 47% 15%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 47% 15%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 42 74% 58%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 222 47% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 47% 20%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 42 74% 58%;
+    --accent-foreground: 0 0% 10%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 42 74% 58%;
+    --chart-1: 42 74% 58%;
+    --chart-2: 142 76% 45%;
+    --chart-3: 217 91% 70%;
+    --chart-4: 47 96% 63%;
+    --chart-5: 27 87% 77%;
+    --sidebar-background: 42 74% 35%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 42 74% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 42 74% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 42 74% 25%;
+    --sidebar-ring: 42 74% 48%;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(232, 178, 68, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(232, 178, 68, 0.8), 0 0 30px rgba(232, 178, 68, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Additional global styles */
+html,
+body {
+  @apply antialiased;
+}
+
+/* Custom text selection color */
+::selection {
+  background-color: rgba(232, 178, 68, 0.3);
+  color: #1a1a1a;
+}
+
+::-moz-selection {
+  background-color: rgba(232, 178, 68, 0.3);
+  color: #1a1a1a;
+}
+
+/* Button highlight effect */
+button[class*="bg-primary"],
+button[class*="bg-accent"],
+.btn-primary,
+.btn-accent {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button[class*="bg-primary"]:hover,
+button[class*="bg-accent"]:hover,
+.btn-primary:hover,
+.btn-accent:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(232, 178, 68, 0.5), 0 8px 10px -6px rgba(232, 178, 68, 0.4);
+  animation: glow 2s ease-in-out infinite;
+}
+
+button[class*="bg-primary"]::before,
+button[class*="bg-accent"]::before,
+.btn-primary::before,
+.btn-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s;
+}
+
+button[class*="bg-primary"]:hover::before,
+button[class*="bg-accent"]:hover::before,
+.btn-primary:hover::before,
+.btn-accent:hover::before {
+  left: 100%;
+}
+
+/* Card animations */
+.card,
+[class*="Card"] {
+  animation: scaleIn 0.4s ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover,
+[class*="Card"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Hide navigation and other UI elements */
+  header,
+  nav,
+  .sidebar,
+  button:not(.print-button) {
+    display: none !important;
+  }
+
+  /* Ensure proper spacing for print */
+  .space-y-6>*+* {
+    margin-top: 1.5rem;
+  }
+
+  /* Optimize table printing */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+}

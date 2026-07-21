@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Message – WhatsApp Controller</title>
+    <meta name="description" content="Send a custom message or use a saved template to send WhatsApp messages." />
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3">🏠 Dashboard</a>
+                <a href="/send.html?v=3" class="active">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html">📊 History</a>
+                <a href="/templates.html">📋 Templates</a>
+                <a href="/api.html">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-header">
+                <h2>Send Message</h2>
+                <p>Send a message directly to any WhatsApp number</p>
+            </div>
+
+            <div class="grid-2">
+                <!-- Custom Message -->
+                <div class="card">
+                    <div class="glass-panel">
+                        <h3 class="mb-4">✉️ Custom Message</h3>
+                    </div>
+                    <div id="alertCustom" class="alert"></div>
+                    <form id="customForm">
+                        <div class="form-group">
+                            <label for="customTo">Recipient Phone</label>
+                            <input id="customTo" type="text" class="form-control"
+                                placeholder="e.g. 919876543210 (with country code)" required />
+                        </div>
+                        <div class="form-group">
+                            <label>MESSAGE</label>
+                            <textarea id="customMessage" class="form-control" rows="5"
+                                placeholder="Type your message…"></textarea>
+                        </div>
+                        <button type="submit" id="customBtn" class="btn btn-primary btn-full">Send Message</button>
+                    </form>
+                </div>
+
+                <!-- Template Message -->
+                <div class="card">
+                    <div class="glass-panel">
+                        <h3 class="mb-4">📋 Template Message</h3>
+                    </div>
+                    <div id="alertTemplate" class="alert"></div>
+                    <form id="templateForm">
+                        <div class="form-group">
+                            <label for="templateTo">Recipient Phone</label>
+                            <input id="templateTo" type="text" class="form-control" placeholder="e.g. 919876543210"
+                                required />
+                        </div>
+                        <div class="form-group">
+                            <label for="templateSelect">Select Template</label>
+                            <select id="templateSelect" class="form-control" required>
+                                <option value="">— Choose a template —</option>
+                            </select>
+                        </div>
+                        <div id="templatePreview" style="display:none; margin-bottom:16px;">
+                            <div class="var-hint">Template body:</div>
+                            <div id="previewBody"
+                                style="background:var(--surface2); border-radius:8px; padding:12px; font-size:0.88rem; color:var(--text-muted); margin-top:6px; white-space:pre-wrap;">
+                            </div>
+                        </div>
+                        <div id="variablesGroup" class="form-group" style="display:none">
+                            <label>Variable Values</label>
+                            <div id="variableInputs"></div>
+                            <p class="var-hint" style="margin-top:8px;">Fill in values for <code>{{variables}}</code>
+                                found in the template</p>
+                        </div>
+                        <button type="submit" id="templateBtn" class="btn btn-primary btn-full">Send Template</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        requireAuth();
+        document.getElementById('userEmail').textContent = localStorage.getItem('email') || '';
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            clearSession(); window.location.href = '/index.html';
+        });
+
+        let templates = [];
+
+        // Load templates into select
+        async function loadTemplates() {
+            const { ok, data } = await apiFetch('/templates');
+            if (!ok) return;
+            templates = data.templates || [];
+            const sel = document.getElementById('templateSelect');
+            templates.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t._id;
+                opt.textContent = t.name;
+                sel.appendChild(opt);
+            });
+        }
+
+        loadTemplates();
+
+        // Extract {{variables}} from template body
+        function extractVars(body) {
+            const matches = [...body.matchAll(/\{\{(\w+)\}\}/g)];
+            return [...new Set(matches.map(m => m[1]))];
+        }
+
+        document.getElementById('templateSelect').addEventListener('change', function () {
+            const t = templates.find(t => t._id === this.value);
+            if (!t) {
+                document.getElementById('templatePreview').style.display = 'none';
+                document.getElementById('variablesGroup').style.display = 'none';
+                return;
+            }
+            document.getElementById('previewBody').textContent = t.body;
+            document.getElementById('templatePreview').style.display = 'block';
+
+            const vars = extractVars(t.body);
+            const container = document.getElementById('variableInputs');
+            container.innerHTML = '';
+            if (vars.length > 0) {
+                vars.forEach(v => {
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '10px';
+                    div.innerHTML = `
+            <label style="display:block;font-size:0.82rem;color:var(--text-muted);margin-bottom:4px;">${v}</label>
+            <input class="form-control" type="text" data-var="${v}" placeholder="Value for {{${v}}}" />
+          `;
+                    container.appendChild(div);
+                });
+                document.getElementById('variablesGroup').style.display = 'block';
+            } else {
+                document.getElementById('variablesGroup').style.display = 'none';
+            }
+        });
+
+        // Custom message
+        document.getElementById('customForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert('alertCustom');
+            const btn = document.getElementById('customBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Sendingâ€¦';
+
+            const to = document.getElementById('customTo').value.trim();
+            const message = document.getElementById('customMsg').value.trim();
+
+            const { ok, data } = await apiFetch('/messages/send', {
+                method: 'POST',
+                body: { to, message },
+            }).catch((err) => ({ ok: false, data: { message: err.message } }));
+
+            if (ok) {
+                showAlert('alertCustom', '✅ Message sent successfully!', 'success');
+                document.getElementById('customMsg').value = '';
+            } else {
+                showAlert('alertCustom', data.message || 'Failed to send', 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Send Message';
+        });
+
+        // Template message
+        document.getElementById('templateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert('alertTemplate');
+            const btn = document.getElementById('templateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Sendingâ€¦';
+
+            const to = document.getElementById('templateTo').value.trim();
+            const templateId = document.getElementById('templateSelect').value;
+
+            // Collect variable values
+            const inputs = document.querySelectorAll('#variableInputs input[data-var]');
+            const variables = {};
+            inputs.forEach(inp => { variables[inp.dataset.var] = inp.value; });
+
+            const { ok, data } = await apiFetch('/messages/send-template', {
+                method: 'POST',
+                body: { to, templateId, variables },
+            }).catch((err) => ({ ok: false, data: { message: err.message } }));
+
+            if (ok) {
+                showAlert('alertTemplate', `✅ Sent: "${data.sentBody}"`, 'success');
+            } else {
+                showAlert('alertTemplate', data.message || 'Failed to send template', 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Send Template';
+        });
+    </script>
+</body>
+
+</html>

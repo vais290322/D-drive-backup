@@ -1,0 +1,1596 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Inbox – WhatsApp Controller</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        /* â”€â”€ Override layout for chat UI â”€â”€ */
+        body {
+            overflow: hidden;
+        }
+
+        .layout {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* â”€â”€ Chat container (fills main) â”€â”€ */
+        .chat-wrap {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* â”€â”€ Conversation List (left panel) â”€â”€ */
+        .conv-list {
+            width: 300px;
+            min-width: 260px;
+            background: rgba(10, 10, 15, 0.55);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-light);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .conv-header {
+            padding: 12px 14px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conv-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .conv-search {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .conv-search input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            color: var(--text);
+            outline: none;
+        }
+
+        .conv-search input:focus {
+            border-color: var(--primary);
+        }
+
+        .conv-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background var(--transition);
+        }
+
+        .conv-item:hover {
+            background: var(--surface2);
+        }
+
+        .conv-item.active {
+            background: rgba(108, 71, 255, 0.12);
+            border-left: 3px solid var(--primary);
+        }
+
+        .conv-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        /* Top row: contact name + timestamp */
+        .conv-row-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .conv-info .conv-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .conv-info .conv-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Bottom row: direction indicator + message preview */
+        .conv-row-bottom {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .conv-dir {
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            width: 14px;
+            text-align: center;
+        }
+
+        .dir-sent {
+            color: #00d4aa;
+        }
+
+        /* green tick for sent */
+        .dir-recv {
+            color: #6c47ff;
+        }
+
+        /* purple arrow for received */
+
+        .conv-info .conv-preview {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+
+        .conv-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        /* â”€â”€ Chat Panel (right) â”€â”€ */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .chat-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .chat-placeholder .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .chat-placeholder p {
+            font-size: 0.9rem;
+        }
+
+        /* Chat header */
+        .chat-header {
+            padding: 14px 20px;
+            background: rgba(19, 19, 26, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .chat-header .ch-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .chat-header .ch-info .ch-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .chat-header .ch-info .ch-phone {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .chat-header .ch-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Message bubbles */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Media in bubbles */
+        .bubble img.media-img {
+            max-width: 260px;
+            max-height: 260px;
+            border-radius: 10px;
+            display: block;
+            cursor: pointer;
+            object-fit: cover;
+        }
+
+        .bubble video.media-vid {
+            max-width: 260px;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .bubble audio.media-aud {
+            max-width: 240px;
+            width: 100%;
+            margin: 4px 0;
+        }
+
+        .media-doc {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-decoration: none;
+            color: inherit;
+            font-size: 0.82rem;
+        }
+
+        .media-doc:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bubble-caption {
+            font-size: 0.82rem;
+            margin-top: 4px;
+            opacity: 0.85;
+        }
+
+        .bubble-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            max-width: 72%;
+        }
+
+        .bubble-row.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .bubble-row.received {
+            align-self: flex-start;
+        }
+
+        .bubble {
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            word-break: break-word;
+            position: relative;
+            max-width: 100%;
+        }
+
+        .sent .bubble {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .received .bubble {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            color: var(--text);
+            border: 1px solid var(--border-light);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .bubble .bubble-time {
+            font-size: 0.65rem;
+            opacity: 0.65;
+            margin-top: 3px;
+            text-align: right;
+        }
+
+        .sent .bubble .bubble-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Date separator */
+        .date-sep {
+            text-align: center;
+            margin: 14px 0;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .date-sep::before,
+        .date-sep::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 60px);
+            height: 1px;
+            background: var(--border);
+        }
+
+        .date-sep::before {
+            left: 0;
+        }
+
+        .date-sep::after {
+            right: 0;
+        }
+
+        /* Message input */
+        .chat-input-bar {
+            padding: 12px 20px;
+            background: rgba(19, 19, 26, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input-bar textarea {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            color: var(--text);
+            resize: none;
+            max-height: 120px;
+            line-height: 1.4;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .chat-input-bar textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .send-fab {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+
+        .send-fab:hover {
+            transform: scale(1.07);
+        }
+
+        .send-fab:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media(max-width:700px) {
+            .conv-list {
+                width: 100%;
+            }
+
+            .chat-panel.open {
+                position: absolute;
+                inset: 0;
+                z-index: 50;
+            }
+
+            .conv-list.hidden {
+                display: none;
+            }
+        }
+
+        /* â”€â”€ Contact Panel (right side) â”€â”€ */
+        .contact-panel {
+            width: 280px;
+            min-width: 280px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.25s ease, min-width 0.25s ease;
+        }
+
+        .contact-panel.collapsed {
+            width: 44px;
+            min-width: 44px;
+        }
+
+        .cp-toggle {
+            width: 100%;
+            padding: 14px 0;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color var(--transition);
+        }
+
+        .cp-toggle:hover {
+            color: var(--primary);
+        }
+
+        .cp-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 14px;
+        }
+
+        .collapsed .cp-body {
+            display: none;
+        }
+
+        .cp-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 auto 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .cp-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cp-name {
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        .cp-phone {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .cp-section {
+            margin-bottom: 16px;
+        }
+
+        .cp-section-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .cp-about {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            word-break: break-word;
+        }
+
+        .cp-input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 10px;
+            font-size: 0.82rem;
+            color: var(--text);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .cp-input:focus {
+            border-color: var(--primary);
+        }
+
+        textarea.cp-input {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* Labels */
+        .label-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .label-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: default;
+        }
+
+        .label-chip .chip-del {
+            cursor: pointer;
+            opacity: 0.75;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+
+        .label-chip .chip-del:hover {
+            opacity: 1;
+        }
+
+        .add-label-row {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .add-label-row input[type=text] {
+            flex: 1;
+        }
+
+        .add-label-row input[type=color] {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+        }
+
+        /* Label filter bar */
+        .label-filter-bar {
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            min-height: 0;
+        }
+
+        .lf-chip {
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            color: #fff;
+            opacity: 0.8;
+            transition: opacity 0.15s, border-color 0.15s;
+        }
+
+        .lf-chip.active {
+            opacity: 1;
+            border-color: #fff;
+        }
+
+        .lf-chip.all {
+            background: var(--surface2);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        /* ── Type filter tabs ──────────────────────────────────────────── */
+        .type-tab-bar {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 15, 0.4);
+        }
+
+        .type-tab {
+            flex: 1;
+            padding: 9px 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+
+        .type-tab:hover {
+            color: var(--text);
+        }
+
+        .type-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Section header inside chat list (e.g. "Broadcast & Status") */
+        .chat-section-hdr {
+            padding: 6px 14px 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: rgba(108, 71, 255, 0.06);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Broadcast/Status avatar style */
+        .conv-avatar.av-broadcast {
+            background: linear-gradient(135deg, #f5a623, #e8562a);
+        }
+
+        .conv-avatar.av-status {
+            background: linear-gradient(135deg, #00d4aa, #0099cc);
+        }
+
+        .conv-avatar.av-group {
+            background: linear-gradient(135deg, #6c47ff, #a020f0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3">🏠 Dashboard</a>
+                <a href="/send.html?v=3">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html" class="active">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html">📊 History</a>
+                <a href="/templates.html">📋 Templates</a>
+                <a href="/api.html">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="chat-wrap">
+
+                <!-- LEFT: Conversation List -->
+                <div class="conv-list" id="convList">
+                    <div class="conv-header">
+                        <h3>💬 Chats</h3>
+                        <div style="display:flex;gap:6px;">
+                            <button id="syncBtn" class="btn btn-primary btn-sm"
+                                title="Sync all history from WhatsApp">⬇️
+                                Sync History</button>
+                            <button id="refreshChats" class="btn btn-secondary btn-sm" title="Refresh">🔄</button>
+                        </div>
+                    </div>
+                    <!-- Type filter tabs -->
+                    <div class="type-tab-bar" id="typeTabBar">
+                        <button class="type-tab active" data-type="all">All</button>
+                        <button class="type-tab" data-type="personal">👤 Personal</button>
+                        <button class="type-tab" data-type="groups">👥 Groups</button>
+                        <button class="type-tab" data-type="broadcast">📢 Broadcast</button>
+                    </div>
+                    <!-- Label filter chips -->
+                    <div class="label-filter-bar" id="labelFilterBar">
+                        <span class="lf-chip all active" data-label="">All Labels</span>
+                    </div>
+                    <div class="conv-search">
+                        <input id="chatSearch" type="text" placeholder="🔍 Search contacts…" />
+                    </div>
+                    <div class="conv-items" id="convItems">
+                        <div class="conv-empty">Loading chats…</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Chat Panel -->
+                <div class="chat-panel" id="chatPanel">
+                    <!-- Placeholder -->
+                    <div class="chat-placeholder" id="chatPlaceholder">
+                        <div class="icon">💬</div>
+                        <p>Select a chat to start messaging</p>
+                        <p style="font-size:0.78rem;margin-top:6px;color:var(--text-muted)">Your WhatsApp messages will
+                            appear here once connected</p>
+                    </div>
+
+                    <!-- Active chat (hidden until selected) -->
+                    <div id="activeChat" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+
+                        <!-- Header -->
+                        <div class="chat-header" id="chatHeader">
+                            <div class="ch-avatar" id="chAvatar">?</div>
+                            <div class="ch-info">
+                                <div class="ch-name" id="chName">—</div>
+                                <div class="ch-phone" id="chPhone">—</div>
+                            </div>
+                            <div class="ch-actions">
+                                <button id="clearChatBtn" class="btn btn-secondary btn-sm"
+                                    title="Clear local history">Clear</button>
+                                <button id="backBtn" class="btn btn-secondary btn-sm" style="display:none">Back</button>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="conv-empty">Loading messages</div>
+                        </div>
+
+                        <!-- Input -->
+                        <div class="chat-input-bar">
+                            <textarea id="msgInput" rows="1" placeholder="Type a message"></textarea>
+                            <button class="send-fab" id="sendMsgBtn" title="Send">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTACT DETAILS PANEL (right, collapsible) -->
+                <div class="contact-panel collapsed" id="contactPanel">
+                    <button class="cp-toggle" id="cpToggle" title="Contact Details"></button>
+                    <div class="cp-body" id="cpBody">
+                        <!-- Avatar -->
+                        <div class="cp-avatar" id="cpAvatar">?</div>
+                        <div class="cp-name" id="cpName">—</div>
+                        <div class="cp-phone" id="cpPhone">—</div>
+
+                        <!-- About -->
+                        <div class="cp-section">
+                            <div class="cp-section-title">About</div>
+                            <div class="cp-about" id="cpAbout" style="font-style:italic;opacity:0.5">No status</div>
+                        </div>
+
+                        <!-- Display Name override -->
+                        <div class="cp-section">
+                            <div class="cp-section-title">Display Name</div>
+                            <input id="cpDisplayName" class="cp-input" type="text" placeholder="Custom name" />
+                            <button id="cpSaveName" class="btn btn-primary btn-sm btn-full" style="margin-top:6px">Save
+                                Name</button>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="cp-section">
+                            <div class="cp-section-title">Notes</div>
+                            <textarea id="cpNotes" class="cp-input"
+                                placeholder="Add notes about this contact"></textarea>
+                            <button id="cpSaveNotes" class="btn btn-secondary btn-sm btn-full"
+                                style="margin-top:6px">Save Notes</button>
+                        </div>
+
+                        <!-- Labels -->
+                        <div class="cp-section">
+                            <div class="cp-section-title">Labels</div>
+                            <div class="label-chips" id="cpLabelChips"></div>
+                            <div class="add-label-row">
+                                <input id="cpLabelName" class="cp-input" type="text" placeholder="Label name" />
+                                <input id="cpLabelColor" type="color" value="#6c47ff" />
+                                <button id="cpAddLabel" class="btn btn-primary btn-sm">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Sync Progress Overlay -->
+    <div id="syncOverlay"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:center;justify-content:center;">
+        <div
+            style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 40px;min-width:320px;max-width:440px;text-align:center;">
+            <div id="syncIcon" style="font-size:2.5rem;margin-bottom:12px">⏳</div>
+            <h3 id="syncTitle" style="font-weight:700;margin-bottom:6px">Syncing WhatsApp History</h3>
+            <p id="syncSubtitle" style="color:var(--text-muted);font-size:0.85rem;margin-bottom:20px">Fetching your
+                chats…</p>
+            <!-- Progress bar -->
+            <div style="background:var(--surface2);border-radius:999px;height:8px;overflow:hidden;margin-bottom:12px;">
+                <div id="syncBar"
+                    style="height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:999px;width:0%;transition:width 0.4s ease;">
+                </div>
+            </div>
+            <p id="syncDetail" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:20px;">Preparing…</p>
+            <button id="syncCloseBtn" class="btn btn-secondary" style="display:none">Close</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/api.js"></script>
+    <script>
+        requireAuth();
+        document.getElementById('userEmail').textContent = localStorage.getItem('email') || '';
+        document.getElementById('logoutBtn').addEventListener('click', () => { clearSession(); window.location.href = '/index.html'; });
+
+        let allChats = [];
+        let activeChatId = null;
+        let activeChatIdEnc = null;
+        let lastMsgTime = null;
+
+        const token = localStorage.getItem('token');
+        const socket = io({ auth: { token } });
+
+        socket.on('message_received', (data) => {
+            const m = data.message;
+            // If this is the active chat open on the right, append instantly
+            if (activeChatIdEnc === encodeURIComponent(m.chatId)) {
+                appendMessage(m);
+                lastMsgTime = m.timestamp;
+            }
+            // Always bump the chat list on the left to show the new snippet
+            loadChats();
+        });
+
+        // — Helpers ——————————————————————————————————————————————————————————————————
+        function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function initials(name) { return (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+        function fmtTime(ts) {
+            const d = new Date(ts);
+            const now = new Date();
+            if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        }
+        function fmtBubbleTime(ts) { return new Date(ts).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
+        function fmtDateSep(ts) { return new Date(ts).toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }); }
+
+        // — Load conversation list ———————————————————————————————————————————————————
+        async function loadChats() {
+            const { ok, data } = await apiFetch('/inbox/chats');
+            const container = document.getElementById('convItems');
+            if (!ok || !data.chats.length) {
+                container.innerHTML = '<div class="conv-empty">No messages yet.<br>Connect WhatsApp and receive a message to see it here.</div>';
+                return;
+            }
+            allChats = data.chats;
+            applyFilters();
+
+            // Auto-open chat if provided in URL parameter
+            const params = new URLSearchParams(window.location.search);
+            const autoChatEnc = params.get('chat');
+            if (autoChatEnc && !activeChatId) {
+                // Remove the URL parameter cleanly so it doesn't trigger again on refresh
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+                // First check if this chat exists in our active chats list
+                const targetChat = allChats.find(c => c.chatIdEnc === autoChatEnc);
+                if (targetChat) {
+                    window._openChatWithContact(targetChat.chatIdEnc, targetChat.chatId);
+                } else {
+                    // Chat has no history yet, we need to fetch the contact info to open an empty pane
+                    const { ok: cOk, data: cData } = await apiFetch(`/contacts/${autoChatEnc}`);
+                    if (cOk && cData.contact) {
+                        const c = cData.contact;
+                        // Manually trigger the open chat flow with an empty history
+                        activeChatId = c.chatId;
+                        activeChatIdEnc = autoChatEnc;
+
+                        document.getElementById('chatPlaceholder').style.display = 'none';
+                        document.getElementById('activeChat').style.display = 'flex';
+
+                        // Set Header
+                        const name = c.displayName || c.waName || ('+' + c.contactPhone) || '?';
+                        document.getElementById('chAvatar').innerHTML = c.profilePicUrl
+                            ? `<img src="${c.profilePicUrl}" style="width:100%;height:100%;object-fit:cover;">`
+                            : initials(name);
+                        document.getElementById('chName').textContent = esc(name) + (c.isGroup ? ' 👥' : '');
+                        document.getElementById('chPhone').textContent = `+${esc(c.contactPhone || c.chatId.split('@')[0])}`;
+
+                        document.getElementById('chatPanel').classList.add('mobile-active');
+                        document.getElementById('backBtn').style.display = 'block';
+
+                        // Show empty state
+                        document.getElementById('chatMessages').innerHTML = '<div class="conv-empty">No messages yet. Say hi! 👋</div>';
+
+                        // Load contact panel info
+                        const panel = document.getElementById('contactPanel');
+                        if (panel.classList.contains('collapsed')) {
+                            panel.classList.remove('collapsed');
+                            document.getElementById('cpToggle').textContent = '❌';
+                        }
+                        loadContactDetails(autoChatEnc);
+                    }
+                }
+            }
+        }
+
+        // ── Chat type helpers ────────────────────────────────────────────────────
+        function isBroadcastChat(c) {
+            return c.chatId === 'status@broadcast' ||
+                c.chatId.endsWith('@broadcast') ||
+                (c.contactName || '').toLowerCase().includes('broadcast');
+        }
+        function isStatusChat(c) {
+            return c.chatId === 'status@broadcast';
+        }
+        function isGroupChat(c) {
+            return c.isGroup || c.chatId.endsWith('@g.us');
+        }
+        function chatAvatarClass(c) {
+            if (isStatusChat(c)) return 'av-status';
+            if (isBroadcastChat(c)) return 'av-broadcast';
+            if (isGroupChat(c)) return 'av-group';
+            return '';
+        }
+        function chatTypeLabel(c) {
+            if (isStatusChat(c)) return '📡';
+            if (isBroadcastChat(c)) return '📢';
+            if (isGroupChat(c)) return '👥';
+            return '';
+        }
+
+        // ── Active type tab state ────────────────────────────────────────────────
+        let activeTypeTab = 'all';
+
+        document.getElementById('typeTabBar').addEventListener('click', (e) => {
+            const tab = e.target.closest('.type-tab');
+            if (!tab) return;
+            document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            activeTypeTab = tab.dataset.type;
+            // Hide label bar when on broadcast (not useful there)
+            document.getElementById('labelFilterBar').style.display =
+                activeTypeTab === 'broadcast' ? 'none' : '';
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const q = (document.getElementById('chatSearch').value || '').toLowerCase();
+            const activeLabelChip = document.querySelector('#labelFilterBar .lf-chip.active');
+            const activeLabel = activeLabelChip ? activeLabelChip.dataset.label : '';
+            renderChats(allChats, q, activeLabel);
+        }
+
+        function renderChats(chats, searchQ = '', labelFilter = '') {
+            const container = document.getElementById('convItems');
+
+            // Apply text search
+            let filtered = chats.filter(c =>
+                !searchQ ||
+                (c.contactName || '').toLowerCase().includes(searchQ) ||
+                (c.contactPhone || '').includes(searchQ)
+            );
+
+            // Separate broadcast/status from normal chats
+            const broadcastChats = filtered.filter(c => isBroadcastChat(c));
+            const normalChats = filtered.filter(c => !isBroadcastChat(c));
+
+            // Apply type tab filter on normal chats
+            let tabFiltered;
+            if (activeTypeTab === 'personal') {
+                tabFiltered = normalChats.filter(c => !isGroupChat(c));
+            } else if (activeTypeTab === 'groups') {
+                tabFiltered = normalChats.filter(c => isGroupChat(c));
+            } else if (activeTypeTab === 'broadcast') {
+                tabFiltered = broadcastChats;
+            } else {
+                tabFiltered = normalChats; // 'all' = no broadcast mixed in
+            }
+
+            if (!tabFiltered.length && (activeTypeTab !== 'all' || !broadcastChats.length)) {
+                container.innerHTML = '<div class="conv-empty">No chats found</div>';
+                return;
+            }
+
+            function buildItem(c) {
+                const avClass = chatAvatarClass(c);
+                const typeLbl = chatTypeLabel(c);
+                return `
+        <div class="conv-item ${c.chatIdEnc === activeChatIdEnc ? 'active' : ''}"
+             data-enc="${esc(c.chatIdEnc)}" data-chatid="${esc(c.chatId)}">
+          <div class="conv-avatar ${avClass}">${initials(c.contactName)}</div>
+          <div class="conv-info">
+            <div class="conv-row-top">
+              <div class="conv-name">${esc(c.contactName)}${typeLbl ? ' ' + typeLbl : ''}</div>
+              <div class="conv-time">${fmtTime(c.lastTime)}</div>
+            </div>
+            <div class="conv-row-bottom">
+              <span class="conv-dir ${c.lastDir === 'sent' ? 'dir-sent' : 'dir-recv'}">${c.lastDir === 'sent' ? '✓' : '←'}</span>
+              <div class="conv-preview">${esc(c.lastMessage)}</div>
+            </div>
+          </div>
+        </div>`;
+            }
+
+            let html = '';
+
+            // On "All" tab — show normal chats first, then broadcast section at the bottom
+            if (activeTypeTab === 'all') {
+                html += tabFiltered.map(buildItem).join('');
+                if (broadcastChats.length) {
+                    html += `<div class="chat-section-hdr">📢 Broadcast &amp; Status</div>`;
+                    html += broadcastChats.map(buildItem).join('');
+                }
+            } else if (activeTypeTab === 'broadcast') {
+                if (broadcastChats.length) {
+                    html += `<div class="chat-section-hdr">📢 Broadcast &amp; Status</div>`;
+                    html += broadcastChats.map(buildItem).join('');
+                } else {
+                    html = '<div class="conv-empty">No broadcast or status chats found</div>';
+                }
+            } else {
+                html += tabFiltered.map(buildItem).join('');
+                if (!tabFiltered.length) html = '<div class="conv-empty">No chats found</div>';
+            }
+
+            container.innerHTML = html;
+            container.querySelectorAll('.conv-item').forEach(el => {
+                el.addEventListener('click', () => openChat(el.dataset.enc, el.dataset.chatid));
+            });
+        }
+
+        // — Search ———————————————————————————————————————————————————————————————————
+        document.getElementById('chatSearch').addEventListener('input', applyFilters);
+
+        document.getElementById('refreshChats').addEventListener('click', loadChats);
+
+        // — Open a chat ——————————————————————————————————————————————————————————————
+        async function openChat(chatIdEnc, chatId) {
+            activeChatIdEnc = chatIdEnc;
+            activeChatId = chatId;
+            lastMsgTime = null;
+
+            stopChatPoll();
+
+            // Update sidebar highlight
+            document.querySelectorAll('.conv-item').forEach(el =>
+                el.classList.toggle('active', el.dataset.enc === chatIdEnc)
+            );
+
+            // Show chat panel
+            document.getElementById('chatPlaceholder').style.display = 'none';
+            const ac = document.getElementById('activeChat');
+            ac.style.display = 'flex'; ac.style.flexDirection = 'column';
+
+            // Header
+            const chat = allChats.find(c => c.chatIdEnc === chatIdEnc) || {};
+            const name = chat.contactName || chat.contactPhone || chatId.replace('@c.us', '').replace('@g.us', '');
+            document.getElementById('chName').textContent = name;
+            document.getElementById('chPhone').textContent = chat.contactPhone ? '+' + chat.contactPhone : chatId;
+            document.getElementById('chAvatar').textContent = initials(name);
+
+            // Load messages
+            document.getElementById('chatMessages').innerHTML = '<div class="conv-empty">Loading…</div>';
+            await loadMessages(chatIdEnc);
+            startChatPoll(chatIdEnc);
+        }
+
+        async function loadMessages(chatIdEnc) {
+            const { ok, data } = await apiFetch(`/inbox/chats/${chatIdEnc}/messages?limit=100`);
+            if (!ok) return;
+            renderMessages(data.messages);
+            if (data.messages.length) {
+                lastMsgTime = data.messages[data.messages.length - 1].timestamp;
+            }
+        }
+
+        // — Render bubble content (text / image / video / audio / document) —
+        function renderBubbleContent(m) {
+            let content = '';
+
+            if (m.hasMedia && m.mediaUrl) {
+                switch (m.mediaType) {
+                    case 'image':
+                    case 'sticker':
+                        content += `<img src="${m.mediaUrl}" alt="image" class="media-img"
+                                  onclick="window.open('${m.mediaUrl}','_blank')" />`;
+                        break;
+                    case 'video':
+                        content += `<video class="media-vid" controls preload="metadata">
+                                 <source src="${m.mediaUrl}" type="${m.mimeType || 'video/mp4'}">
+                                 <a href="${m.mediaUrl}" target="_blank">Download video</a>
+                               </video>`;
+                        break;
+                    case 'audio':
+                        content += `<audio class="media-aud" controls preload="metadata">
+                                 <source src="${m.mediaUrl}" type="${m.mimeType || 'audio/ogg'}">
+                               </audio>`;
+                        break;
+                    case 'ptt': // push-to-talk voice note
+                        content += `<audio class="media-aud" controls preload="metadata">
+                                 <source src="${m.mediaUrl}" type="${m.mimeType || 'audio/ogg; codecs=opus'}">
+                               <div style="font-size:0.72rem;opacity:0.6;margin-top:2px">🎤 Voice note</div>`;
+                        break;
+                    default: // document / pdf / etc
+                        content += `<a href="${m.mediaUrl}" target="_blank" class="media-doc">
+                                 📎 ${esc(m.fileName || 'Download file')}
+                               </a>`;
+                }
+                if (m.caption) content += `<div class="bubble-caption">${esc(m.caption)}</div>`;
+            } else if (m.hasMedia && !m.mediaUrl) {
+                // Downloaded but URL missing — show type label
+                const icons = { image: '🖼️', video: '🎥', audio: '🔊', ptt: '🎤', document: '📎', sticker: '🏷️' };
+                content += `<span style="opacity:0.6;font-size:0.85rem">${icons[m.mediaType] || '📎'} ${m.mediaType || 'Media'}</span>`;
+            } else {
+                // Plain text
+                content = esc(m.body);
+            }
+
+            content += `<div class="bubble-time">${fmtBubbleTime(m.timestamp)}</div>`;
+            return content;
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chatMessages');
+            if (!messages.length) {
+                container.innerHTML = '<div class="conv-empty">No messages yet. Say hi! 👋</div>';
+                return;
+            }
+
+            let lastDate = null;
+            let html = '';
+
+            messages.forEach(m => {
+                const msgDate = new Date(m.timestamp).toDateString();
+                if (msgDate !== lastDate) {
+                    html += `<div class="date-sep">${fmtDateSep(m.timestamp)}</div>`;
+                    lastDate = msgDate;
+                }
+                html += `
+          <div class="bubble-row ${m.direction}">
+            <div class="bubble">${renderBubbleContent(m)}</div>
+          </div>`;
+            });
+
+            container.innerHTML = html;
+            scrollToBottom();
+        }
+
+        function appendMessage(m) {
+            const container = document.getElementById('chatMessages');
+            // Remove empty placeholder
+            const empty = container.querySelector('.conv-empty');
+            if (empty) empty.remove();
+
+            const row = document.createElement('div');
+            row.className = `bubble-row ${m.direction}`;
+            row.innerHTML = `<div class="bubble">${renderBubbleContent(m)}</div>`;
+            container.appendChild(row);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const c = document.getElementById('chatMessages');
+            c.scrollTop = c.scrollHeight;
+        }
+
+        // Real-time updates handled by socket listener now
+        function startChatPoll(chatIdEnc) {
+            // No-op: left for signature compatibility if needed
+        }
+
+        function stopChatPoll() {
+            // No-op
+        }
+
+        // — Send message —————————————————————————————————————————————————————————————
+        const msgInput = document.getElementById('msgInput');
+        const sendBtn = document.getElementById('sendMsgBtn');
+
+        async function sendMessage() {
+            const body = msgInput.value.trim();
+            if (!body || !activeChatIdEnc) return;
+            sendBtn.disabled = true;
+            msgInput.value = '';
+            msgInput.style.height = 'auto';
+
+            const { ok, data } = await apiFetch(`/inbox/chats/${activeChatIdEnc}/send`, {
+                method: 'POST',
+                body: { message: body },
+            }).catch(() => ({ ok: false, data: { message: 'Network error' } }));
+
+            if (ok) {
+                appendMessage({ body, direction: 'sent', timestamp: new Date() });
+                lastMsgTime = new Date().toISOString();
+                loadChats();
+            } else {
+                alert('Failed to send: ' + (data.message || 'Unknown error'));
+                msgInput.value = body; // restore
+            }
+            sendBtn.disabled = false;
+            msgInput.focus();
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        msgInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+
+        // Auto-grow textarea
+        msgInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // — Clear chat ———————————————————————————————————————————————————————————————
+        document.getElementById('clearChatBtn').addEventListener('click', async () => {
+            if (!activeChatIdEnc) return;
+            if (!confirm('Clear this chat history from local database?')) return;
+            const { ok } = await apiFetch(`/inbox/chats/${activeChatIdEnc}`, { method: 'DELETE' });
+            if (ok) {
+                document.getElementById('chatMessages').innerHTML = '<div class="conv-empty">Chat cleared</div>';
+                lastMsgTime = null;
+                loadChats();
+            }
+        });
+
+        // — Back button ——————————————————————————————————————————————————————————————
+        document.getElementById('backBtn').addEventListener('click', () => {
+            // Mobile: hide panel
+            document.getElementById('chatPanel').classList.remove('mobile-active');
+
+            // Desktop/All: actually clear the selected chat
+            document.getElementById('activeChat').style.display = 'none';
+            document.getElementById('chatPlaceholder').style.display = 'flex';
+
+            activeChatId = null;
+            activeChatIdEnc = null;
+            stopChatPoll();
+
+            // Remove active highlight from list
+            document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+
+            // Hide contact panel if it was forced open
+            document.getElementById('contactPanel').classList.add('collapsed');
+            document.getElementById('cpToggle').textContent = '👤';
+        });
+
+        // — Init —————————————————————————————————————————————————————————————————————
+        loadChats();
+
+        // — Sync History —————————————————————————————————————————————————————————————
+        let syncPollTimer = null;
+
+        function showSyncOverlay(show) {
+            const el = document.getElementById('syncOverlay');
+            el.style.display = show ? 'flex' : 'none';
+        }
+
+        async function startSync() {
+            document.getElementById('syncBtn').disabled = true;
+            document.getElementById('syncIcon').textContent = '⏳';
+            document.getElementById('syncTitle').textContent = 'Syncing WhatsApp History';
+            document.getElementById('syncSubtitle').textContent = 'Fetching messages from all chats…';
+            document.getElementById('syncBar').style.width = '0%';
+            document.getElementById('syncDetail').textContent = 'Starting…';
+            document.getElementById('syncCloseBtn').style.display = 'none';
+            showSyncOverlay(true);
+
+            const { ok, data } = await apiFetch('/inbox/sync', { method: 'POST', body: { limit: 100 } })
+                .catch(() => ({ ok: false, data: { message: 'Network error' } }));
+
+            if (!ok) {
+                document.getElementById('syncIcon').textContent = '⚠️';
+                document.getElementById('syncTitle').textContent = 'Sync Failed';
+                document.getElementById('syncSubtitle').textContent = data.message || 'Unknown error';
+                document.getElementById('syncCloseBtn').style.display = 'inline-flex';
+                document.getElementById('syncBtn').disabled = false;
+                return;
+            }
+
+            // Poll status every 2 seconds
+            syncPollTimer = setInterval(async () => {
+                const { ok: sok, data: sd } = await apiFetch('/inbox/sync/status')
+                    .catch(() => ({ ok: false, data: {} }));
+                if (!sok) return;
+
+                const pct = sd.total > 0 ? Math.round((sd.progress / sd.total) * 100) : 0;
+                document.getElementById('syncBar').style.width = pct + '%';
+                document.getElementById('syncDetail').textContent =
+                    `Chat ${sd.progress || 0} of ${sd.total || '?'} • ${sd.saved || 0} new messages saved • ${sd.skipped || 0} already existed`;
+
+                if (sd.done) {
+                    clearInterval(syncPollTimer); syncPollTimer = null;
+                    document.getElementById('syncBtn').disabled = false;
+
+                    if (sd.error) {
+                        document.getElementById('syncIcon').textContent = '⚠️';
+                        document.getElementById('syncTitle').textContent = 'Sync Error';
+                        document.getElementById('syncSubtitle').textContent = sd.error;
+                    } else {
+                        document.getElementById('syncBar').style.width = '100%';
+                        document.getElementById('syncIcon').textContent = '✅';
+                        document.getElementById('syncTitle').textContent = 'Sync Complete!';
+                        document.getElementById('syncSubtitle').textContent =
+                            `${sd.saved} new messages saved from ${sd.total} chats`;
+                        loadChats(); // reload inbox
+                    }
+                    document.getElementById('syncCloseBtn').style.display = 'inline-flex';
+                }
+            }, 2000);
+        }
+
+        document.getElementById('syncBtn').addEventListener('click', startSync);
+        document.getElementById('syncCloseBtn').addEventListener('click', () => showSyncOverlay(false));
+
+        // â”€â”€ Contact Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        let activeFilterLabel = '';
+
+        // Toggle collapse/expand
+        document.getElementById('cpToggle').addEventListener('click', () => {
+            const panel = document.getElementById('contactPanel');
+            panel.classList.toggle('collapsed');
+            document.getElementById('cpToggle').textContent =
+                panel.classList.contains('collapsed') ? '👤' : '❌';
+        });
+
+        // Load contact details when chat opens
+        async function loadContactDetails(chatIdEnc) {
+            const { ok, data } = await apiFetch(`/contacts/${chatIdEnc}`).catch(() => ({ ok: false, data: {} }));
+            if (!ok) return;
+            const c = data.contact;
+
+            // Avatar
+            const avatarEl = document.getElementById('cpAvatar');
+            const name = c.displayName || c.waName || c.contactPhone || '?';
+            if (c.profilePicUrl) {
+                avatarEl.innerHTML = `<img src="${c.profilePicUrl}" onerror="this.parentElement.textContent='${initials(name)}'" />`;
+            } else {
+                avatarEl.textContent = initials(name);
+            }
+
+            document.getElementById('cpName').textContent = name;
+            document.getElementById('cpPhone').textContent = c.contactPhone ? '+' + c.contactPhone : '—';
+
+            const aboutEl = document.getElementById('cpAbout');
+            if (c.about) {
+                aboutEl.textContent = c.about;
+                aboutEl.style.fontStyle = 'normal';
+                aboutEl.style.opacity = '1';
+            } else {
+                aboutEl.textContent = 'No status';
+                aboutEl.style.fontStyle = 'italic';
+                aboutEl.style.opacity = '0.5';
+            }
+
+            document.getElementById('cpDisplayName').value = c.displayName || '';
+            document.getElementById('cpNotes').value = c.notes || '';
+            renderContactLabels(c.labels || [], chatIdEnc);
+        }
+
+        // Render label chips in contact panel
+        function renderContactLabels(labels, chatIdEnc) {
+            const container = document.getElementById('cpLabelChips');
+            if (!labels.length) {
+                container.innerHTML = '<span style="color:var(--text-muted);font-size:0.78rem">No labels yet</span>';
+                return;
+            }
+            container.innerHTML = labels.map(l => `
+                <span class="label-chip" style="background:${l.color}">
+                    ${esc(l.name)}
+                    <span class="chip-del" data-label="${esc(l.name)}" data-enc="${chatIdEnc}">&times;</span>
+                </span>`).join('');
+
+            container.querySelectorAll('.chip-del').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const enc = btn.dataset.enc;
+                    const labelName = btn.dataset.label;
+                    await apiFetch(`/contacts/${enc}/labels/${encodeURIComponent(labelName)}`, { method: 'DELETE' });
+                    loadContactDetails(enc);
+                    loadAllLabels();
+                    loadChats();
+                });
+            });
+        }
+
+        // Save display name
+        document.getElementById('cpSaveName').addEventListener('click', async () => {
+            if (!activeChatIdEnc) return;
+            const name = document.getElementById('cpDisplayName').value.trim();
+            const btn = document.getElementById('cpSaveName');
+            await apiFetch(`/contacts/${activeChatIdEnc}`, { method: 'PUT', body: { displayName: name } });
+            btn.textContent = '✓ Saved'; setTimeout(() => btn.textContent = 'Save Name', 1500);
+            loadChats();
+        });
+
+        // Save notes
+        document.getElementById('cpSaveNotes').addEventListener('click', async () => {
+            if (!activeChatIdEnc) return;
+            const notes = document.getElementById('cpNotes').value;
+            const btn = document.getElementById('cpSaveNotes');
+            await apiFetch(`/contacts/${activeChatIdEnc}`, { method: 'PUT', body: { notes } });
+            btn.textContent = '✓ Saved'; setTimeout(() => btn.textContent = 'Save Notes', 1500);
+        });
+
+        // Add label
+        document.getElementById('cpAddLabel').addEventListener('click', async () => {
+            if (!activeChatIdEnc) return;
+            const name = document.getElementById('cpLabelName').value.trim();
+            const color = document.getElementById('cpLabelColor').value;
+            if (!name) return;
+            await apiFetch(`/contacts/${activeChatIdEnc}/labels`, { method: 'POST', body: { name, color } });
+            document.getElementById('cpLabelName').value = '';
+            loadContactDetails(activeChatIdEnc);
+            loadAllLabels();
+            loadChats();
+        });
+        document.getElementById('cpLabelName').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('cpAddLabel').click();
+        });
+
+        // â”€â”€ Label Filter Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function loadAllLabels() {
+            const { ok, data } = await apiFetch('/contacts/labels/all').catch(() => ({ ok: false, data: {} }));
+            const bar = document.getElementById('labelFilterBar');
+            if (!ok || !data.labels.length) {
+                bar.innerHTML = '<span class="lf-chip all active" data-label="">All</span>';
+                bindFilterChips();
+                return;
+            }
+            bar.innerHTML = '<span class="lf-chip all" data-label="">All</span>' +
+                data.labels.map(l =>
+                    `<span class="lf-chip ${activeFilterLabel === l.name ? 'active' : ''}"
+                           style="background:${l.color}" data-label="${esc(l.name)}">${esc(l.name)}</span>`
+                ).join('');
+            // Mark active
+            bar.querySelectorAll('.lf-chip').forEach(c => {
+                if (c.dataset.label === activeFilterLabel) c.classList.add('active');
+            });
+            bindFilterChips();
+        }
+
+        function bindFilterChips() {
+            document.querySelectorAll('.lf-chip').forEach(chip => {
+                chip.addEventListener('click', async () => {
+                    activeFilterLabel = chip.dataset.label;
+                    document.querySelectorAll('.lf-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+
+                    if (!activeFilterLabel) {
+                        renderChats(allChats);
+                        return;
+                    }
+                    // Filter by label
+                    const { ok, data } = await apiFetch(`/contacts/filter/${encodeURIComponent(activeFilterLabel)}`);
+                    if (!ok) return;
+                    const filtered = allChats.filter(c => data.chatIds.includes(c.chatId));
+                    renderChats(filtered);
+                });
+            });
+        }
+
+        // â”€â”€ Hook contact panel into openChat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const _origOpenChat = openChat;
+        // Extend openChat to load contact panel
+        const openChatOrig = openChat;
+        window._openChatWithContact = async (chatIdEnc, chatId) => {
+            await openChatOrig(chatIdEnc, chatId);
+            // Auto-expand panel then load
+            const panel = document.getElementById('contactPanel');
+            if (panel.classList.contains('collapsed')) {
+                panel.classList.remove('collapsed');
+                document.getElementById('cpToggle').textContent = '❌';
+            }
+            loadContactDetails(chatIdEnc);
+        };
+
+        // Patch conv-item clicks to use extended version
+        const origRenderChats = renderChats;
+        renderChats = function (chats) {
+            origRenderChats(chats);
+            const container = document.getElementById('convItems');
+            container.querySelectorAll('.conv-item').forEach(el => {
+                el.replaceWith(el.cloneNode(true)); // remove old listeners
+            });
+            document.querySelectorAll('.conv-item').forEach(el => {
+                el.addEventListener('click', () => window._openChatWithContact(el.dataset.enc, el.dataset.chatid));
+            });
+        };
+
+        loadAllLabels();
+    </script>
+</body>
+
+</html>

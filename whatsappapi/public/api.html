@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer & API – WhatsApp SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css?v=1.1.0">
+    <style>
+        .dev-section {
+            background: rgba(19, 19, 26, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .dev-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-key-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-light);
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        .api-key-box code {
+            flex: 1;
+            font-family: monospace;
+            color: var(--primary);
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .code-block {
+            background: #0d0d12;
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #a08cff;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--success);
+            margin-right: 10px;
+        }
+
+        .method-badge.post {
+            background: rgba(108, 71, 255, 0.15);
+            color: #a08cff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📱 <span>WhatsApp</span>&nbsp;Controller</div>
+            <nav>
+                <a href="/dashboard.html?v=3">🏠 Dashboard</a>
+                <a href="/send.html?v=3">✉️ Send Message</a>
+                <a href="/bulk.html">📤 Bulk Send</a>
+                <a href="/inbox.html">💬 Inbox</a>
+                <a href="/contacts.html">👥 Contacts</a>
+                <a href="/history.html">📊 History</a>
+                <a href="/templates.html">📋 Templates</a>
+                <a href="/api.html" class="active">💻 Developer / API</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userEmail">—</div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm btn-full">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-header">
+                <h2>Developer & API</h2>
+                <p>Manage Webhooks and interface programmatically with your WhatsApp account.</p>
+            </div>
+
+            <!-- Webhook Settings -->
+            <div class="dev-section">
+                <h3>🔗 Webhook Configuration</h3>
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
+                    Receive real-time HTTP POST logs to your server whenever a WhatsApp message is received, or when
+                    your device connects/disconnects.
+                </p>
+                <div class="form-group">
+                    <label>Webhook URL (Endpoint)</label>
+                    <input type="url" id="webhookUrl" class="form-control"
+                        placeholder="https://api.yoursite.com/whatsapp-webhook">
+                </div>
+                <div class="form-group">
+                    <label>Webhook Secret (HMAC SHA256 Signature)</label>
+                    <input type="text" id="webhookSecret" class="form-control"
+                        placeholder="Optional secure symmetric string">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+                        If provided, we will sign all outbound payloads generating an HMAC SHA256 signature in the
+                        <code>x-hub-signature-256</code> header.
+                    </p>
+                </div>
+                <button id="saveWebhookBtn" class="btn btn-primary">Save Settings</button>
+            </div>
+
+            <!-- API Access -->
+            <div class="dev-section">
+                <h3>🔑 API Access</h3>
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
+                    Your secure API Key is required to authorize all incoming REST API requests using the
+                    <code>x-api-key</code> HTTP header. Do not share this openly.
+                </p>
+
+                <div class="api-key-box">
+                    <code id="apiKeyDisplay">Loading...</code>
+                    <button class="btn btn-secondary btn-sm" id="copyApiBtn">Copy</button>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <button id="regenerateKeyBtn" class="btn btn-danger btn-sm">Regenerate API Key</button>
+                    <p style="font-size: 0.75rem; color: var(--danger); margin-top: 8px; font-weight: 600;">
+                        Warning: This will immediately break any existing integrations using the old key.
+                    </p>
+                </div>
+            </div>
+
+            <!-- API Documentation -->
+            <div class="dev-section">
+                <h3>📖 API Reference Docs</h3>
+
+                <h4 style="margin-bottom: 12px;"><span class="method-badge post">POST</span> Send Message (cURL)</h4>
+                <div class="code-block">curl -X POST http://localhost:3000/api/public/send \
+                    -H "Content-Type: application/json" \
+                    -H "x-api-key: YOUR_API_KEY" \
+                    -d '{
+                    "number": "919876543210",
+                    "message": "Hello from API!"
+                    }'</div>
+
+                <h4 style="margin-top: 24px; margin-bottom: 12px;"><span class="method-badge post">POST</span> Send
+                    Message (Node.js)</h4>
+                <div class="code-block">const axios = require('axios');
+
+                    axios.post('http://localhost:3000/api/public/send', {
+                    number: '919876543210',
+                    message: 'Hello from API!'
+                    }, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'YOUR_API_KEY'
+                    }
+                    })
+                    .then(res => console.log(res.data))
+                    .catch(err => console.error(err));</div>
+
+                <h4 style="margin-top: 24px; margin-bottom: 12px;"><span class="method-badge post">POST</span> Send
+                    Message (PHP)</h4>
+                <div class="code-block">&lt;?php
+                    $ch = curl_init('http://localhost:3000/api/public/send');
+                    $payload = json_encode([
+                    'number' => '919876543210',
+                    'message' => 'Hello from API!'
+                    ]);
+
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'x-api-key: YOUR_API_KEY'
+                    ]);
+
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                    echo $result;
+                    ?&gt;</div>
+
+                <h4 style="margin-top: 32px; margin-bottom: 12px;"><span class="method-badge">NODE.JS</span> Verify
+                    Webhook</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Validates the
+                    <code>x-hub-signature-256</code> header using your predefined secret.
+                </p>
+                <div class="code-block">const crypto = require('crypto');
+
+                    app.post('/whatsapp-webhook', express.json(), (req, res) => {
+                    const signature = req.headers['x-hub-signature-256'];
+                    const payload = JSON.stringify(req.body);
+                    const secret = 'YOUR_WEBHOOK_SECRET';
+
+                    const hmac = crypto.createHmac('sha256', secret);
+                    const expectedSig = hmac.update(payload).digest('hex');
+
+                    if (signature !== expectedSig) {
+                    return res.status(401).send('Invalid signature');
+                    }
+
+                    console.log('Verified Webhook received:', req.body);
+                    res.sendStatus(200);
+                    });</div>
+
+                <h4 style="margin-top: 24px; margin-bottom: 12px;"><span class="method-badge">PHP</span> Verify Webhook
+                </h4>
+                <div class="code-block">&lt;?php
+                    $secret = 'YOUR_WEBHOOK_SECRET';
+                    $signature = $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
+                    $payload = file_get_contents('php://input');
+
+                    $expectedSig = hash_hmac('sha256', $payload, $secret);
+
+                    if (!hash_equals($signature, $expectedSig)) {
+                    http_response_code(401);
+                    die('Invalid signature');
+                    }
+
+                    $data = json_decode($payload, true);
+                    // Process webhook data...
+                    http_response_code(200);
+                    ?&gt;</div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="alertTitle">Alert</h3>
+                <button class="modal-close" id="closeAlert">Ã—</button>
+            </div>
+            <p id="alertMsg" style="margin-bottom: 24px; color: var(--text-muted);"></p>
+            <div style="text-align: right;">
+                <button class="btn btn-primary" id="confirmAlert">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            requireAuth();
+            const urlInput = document.getElementById('webhookUrl');
+            const secretInput = document.getElementById('webhookSecret');
+            const apiKeyDisplay = document.getElementById('apiKeyDisplay');
+
+            // Fetch initial settings
+            async function loadSettings() {
+                try {
+                    const { ok, data } = await apiFetch('/settings/developer');
+                    if (!ok) { showError('Failed to load developer settings.'); return; }
+                    urlInput.value = data.webhookUrl || '';
+                    secretInput.value = data.webhookSecret || '';
+
+                    if (data.apiKey) {
+                        apiKeyDisplay.textContent = data.apiKey;
+                    } else {
+                        // No key yet — auto-generate one for the user
+                        apiKeyDisplay.textContent = 'Generating...';
+                        const { ok: ok2, data: d2 } = await apiFetch('/settings/developer/regenerate', { method: 'POST' });
+                        if (ok2) {
+                            apiKeyDisplay.textContent = d2.apiKey;
+                            localStorage.setItem('apiKey', d2.apiKey);
+                        } else {
+                            apiKeyDisplay.textContent = 'Error generating key';
+                        }
+                    }
+                } catch (err) {
+                    showError('Failed to load developer settings.');
+                }
+            }
+            await loadSettings();
+
+            // Save Webhook Settings
+            document.getElementById('saveWebhookBtn').addEventListener('click', async () => {
+                const url = urlInput.value.trim();
+                if (url && !url.startsWith('http')) {
+                    showError('Webhook URL must be a valid HTTP or HTTPS address.');
+                    return;
+                }
+                const btn = document.getElementById('saveWebhookBtn');
+                btn.textContent = 'Saving...';
+
+                try {
+                    await apiFetch('/settings/developer', {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            webhookUrl: url,
+                            webhookSecret: secretInput.value.trim()
+                        })
+                    });
+                    btn.textContent = 'Saved!';
+                    setTimeout(() => btn.textContent = 'Save Settings', 2000);
+                } catch (e) {
+                    showError(e.message);
+                    btn.textContent = 'Save Settings';
+                }
+            });
+
+            // Copy API Key
+            document.getElementById('copyApiBtn').addEventListener('click', () => {
+                navigator.clipboard.writeText(apiKeyDisplay.textContent);
+                const btn = document.getElementById('copyApiBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+
+            // Regenerate API Key
+            document.getElementById('regenerateKeyBtn').addEventListener('click', () => {
+                const conf = confirm('Are you sure you want to regenerate your API Key? Any existing apps using the old key will break immediately.');
+                if (!conf) return;
+
+                apiFetch('/settings/developer/regenerate', { method: 'POST' })
+                    .then(({ ok, data }) => {
+                        if (ok) {
+                            apiKeyDisplay.textContent = data.apiKey;
+                            localStorage.setItem('apiKey', data.apiKey);
+
+                            // Show auto-closing success dialog
+                            document.getElementById('alertTitle').textContent = 'Success';
+                            document.getElementById('alertMsg').textContent = 'API Key regenerated successfully.';
+                            document.getElementById('confirmAlert').style.display = 'none'; // Hide OK button
+                            document.getElementById('alertModal').classList.add('open');
+
+                            setTimeout(() => {
+                                document.getElementById('alertModal').classList.remove('open');
+                                document.getElementById('confirmAlert').style.display = 'inline-block'; // Restore OK button for future alerts
+                            }, 1500);
+
+                        } else {
+                            showError('Failed to regenerate API key.');
+                        }
+                    })
+                    .catch(err => showError(err.message));
+            });
+
+            function showError(msg) {
+                document.getElementById('alertTitle').textContent = 'Error';
+                document.getElementById('alertMsg').textContent = msg;
+                document.getElementById('alertModal').classList.add('open');
+            }
+
+            document.getElementById('closeAlert').addEventListener('click', () => {
+                document.getElementById('alertModal').classList.remove('open');
+            });
+            document.getElementById('confirmAlert').addEventListener('click', () => {
+                document.getElementById('alertModal').classList.remove('open');
+            });
+        });
+    </script>
+</body>
+
+</html>

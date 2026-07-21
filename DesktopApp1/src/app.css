@@ -1,0 +1,12 @@
+.app {
+  display: flex;
+  height: 100vh;
+  background-color: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}

@@ -1,0 +1,10 @@
+/* Force the Slick track to use flexbox so slides stretch equally */
+.slick-track {
+  display: flex !important;
+  align-items: stretch;
+}
+
+/* Make each slide’s wrapper div fill the track’s height */
+.slick-slide > div {
+  height: 100% !important;
+}

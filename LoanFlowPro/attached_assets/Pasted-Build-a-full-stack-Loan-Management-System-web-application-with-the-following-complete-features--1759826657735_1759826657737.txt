@@ -1,0 +1,65 @@
+Build a full-stack Loan Management System web application with the following complete features:
+
+🔑 Core Features:
+
+Customer Management (CRM): Add, edit, delete, and view customer profiles with details (name, address, contact, email, KYC documents, PAN, Aadhaar, etc.)
+
+Loan Application & Approval:
+
+Create new loan applications with type (personal, business, gold, etc.), amount, interest rate, duration, EMI schedule.
+
+Loan approval workflow: Draft → Verification → Approved → Disbursed.
+
+Loan Account Management: Track all active loans, EMI schedules, interest calculations, pending dues, overdue status, and loan closure.
+
+Payment Processing:
+
+Accept EMI payments (manual entry, UPI, card, bank transfer).
+
+Auto-calculate remaining balance, interest, penalty for late payments.
+
+Generate and download Payment Receipts (PDF) instantly.
+
+Passbook Module:
+
+Generate and print customer passbook with full transaction history (loan amount, EMIs paid, remaining balance, payment dates).
+
+Export passbook as PDF or Excel.
+
+Reporting & Dashboard:
+
+Monthly collection report, overdue accounts, total loans disbursed, outstanding balances.
+
+Search, filter, and sort by customer name, loan type, status.
+
+Notifications: Automated SMS/email reminders for EMI due dates and overdue payments.
+
+🛠️ Technical Requirements:
+
+Frontend: React.js with Tailwind CSS
+
+Backend: Node.js + Express.js
+
+Database: MongoDB
+
+Authentication: JWT-based secure login for admin and staff users.
+
+Role Management: Admin, Loan Officer, Collection Agent, Accountant.
+
+Receipt & Passbook: Auto-generate PDFs using a library like pdfkit or jspdf.
+
+Deployment Ready: Include .env example, clear folder structure, and README setup guide.
+
+📌 Extra:
+
+Add search and filter on all data tables.
+
+Add dashboard with summary stats and charts (e.g., total loans, total amount collected, overdue accounts).
+
+Code should be modular, clean, and production-ready.
+
+Goal: Deliver a complete, production-ready loan management and CRM platform with payment receipt generation and passbook printing.
+
+💡 Pro tip: You can add at the end:
+
+“Generate full MERN code step by step (backend first, then frontend), and explain folder structure and setup commands.”

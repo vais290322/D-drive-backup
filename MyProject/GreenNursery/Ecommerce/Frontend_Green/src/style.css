@@ -1,0 +1,23 @@
+.text-pending {
+    color: orange;
+}
+
+.text-processing {
+    color: blue;
+}
+
+.text-shipped {
+    color: #f707df;
+}
+
+.text-delivered {
+    color: #1aeb07;
+}
+
+.text-green {
+    color: #1aeb07;
+}
+
+.text-red {
+    color: red;
+}

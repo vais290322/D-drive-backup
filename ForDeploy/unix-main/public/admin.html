@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Menu Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="responsive-compatibility.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #64748b;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #06b6d4;
+      --light-color: #f8fafc;
+      --dark-color: #1e293b;
+      --border-color: #e2e8f0;
+      --sidebar-width: 260px;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--light-color);
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .sidebar-header h4 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+    
+    .nav-item {
+      margin: 0.25rem 0.75rem;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: #cbd5e1;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: white;
+    }
+    
+    .nav-link.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .nav-link i {
+      width: 20px;
+      margin-right: 0.75rem;
+      font-size: 1rem;
+    }
+    
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      background-color: var(--light-color);
+    }
+    
+    .topbar {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .topbar h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .topbar-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .content-area {
+      padding: 1.5rem;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: #fafbfc;
+      border-radius: 0.75rem 0.75rem 0 0;
+    }
+    
+    .card-header h5 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .btn-outline-secondary {
+      background-color: transparent;
+      color: var(--secondary-color);
+      border: 1px solid var(--border-color);
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-outline-danger {
+      background-color: transparent;
+      color: var(--danger-color);
+      border: 1px solid var(--danger-color);
+    }
+    
+    .btn-outline-danger:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+    
+    .btn-xs {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 2rem;
+    }
+    
+    .table {
+      font-size: 0.875rem;
+    }
+    
+    .table th {
+      background-color: #f8fafc;
+      border-bottom: 2px solid var(--border-color);
+      font-weight: 600;
+      color: var(--dark-color);
+      padding: 0.75rem;
+    }
+    
+    .table td {
+      padding: 0.75rem;
+      vertical-align: middle;
+    }
+    
+    .form-control, .form-select {
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: var(--dark-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .unavailable {
+      background-color: #fef2f2;
+      color: var(--danger-color);
+    }
+    
+    .mobile-toggle {
+      display: none;
+    }
+    
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
+    
+    /* Action buttons styling */
+    .btn-action {
+      margin: 0 2px;
+    }
+    
+    .btn-edit {
+      background-color: var(--info-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-edit:hover {
+      background-color: #0891b2;
+      color: white;
+    }
+    
+    .btn-delete {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-delete:hover {
+      background-color: #dc2626;
+      color: white;
+    }
+    
+    /* Status badges */
+    .status-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .status-available {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-unavailable {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+    
+    /* Item image in table */
+    .item-image-thumb {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 991.98px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.show {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .mobile-toggle {
+        display: inline-flex;
+      }
+    }
+    
+    @media (max-width: 767.98px) {
+      .topbar {
+        padding: 0.75rem 1rem;
+      }
+      
+      .topbar h2 {
+        font-size: 1.25rem;
+      }
+      
+      .content-area {
+        padding: 1rem;
+      }
+      
+      .card-header {
+        padding: 0.75rem 1rem;
+      }
+      
+      .card-body {
+        padding: 1rem;
+      }
+      
+      .table {
+        font-size: 0.8rem;
+      }
+      
+      .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      /* Hide table view on mobile and show mobile card view */
+      .table-responsive {
+        display: none !important;
+      }
+      
+      .mobile-card-view {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+    }
+    
+    /* Drag and Drop Styles */
+    .drag-handle {
+      cursor: move;
+      color: #6c757d;
+      font-size: 18px;
+      padding: 5px;
+      text-align: center;
+    }
+    
+    .drag-handle:hover {
+      color: #495057;
+    }
+    
+    .draggable-row {
+      transition: all 0.2s ease;
+    }
+    
+    .dragging {
+      opacity: 0.5;
+      transform: rotate(5deg);
+    }
+    
+    .drag-over {
+      border-top: 3px solid #007bff;
+    }
+    
+    .sortable-ghost {
+      opacity: 0.4;
+    }
+    
+    .sortable-chosen {
+      background-color: #e3f2fd;
+    }
+    
+    .sortable-drag {
+      background-color: #bbdefb;
+    }
+    
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+    }
+    
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    
+    .draggable-row, .draggable-item-row {
+      transition: all 0.3s ease;
+    }
+    
+    .draggable-row:hover, .draggable-item-row:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .category-header {
+      background-color: #f8f9fa !important;
+      border-top: 2px solid #dee2e6;
+    }
+    
+    /* Improved Item Display Styles */
+    .items-table {
+      font-size: 14px;
+    }
+    
+    .items-table th {
+      background-color: #e9ecef;
+      font-weight: 600;
+      text-align: center;
+      vertical-align: middle;
+      padding: 12px 8px;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    .items-table td {
+      vertical-align: middle;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    
+    .item-name-cell {
+      text-align: left !important;
+      max-width: 200px;
+    }
+    
+    .item-description-cell {
+      text-align: left !important;
+      max-width: 150px;
+      font-size: 12px;
+      color: #6c757d;
+    }
+    
+    .item-image {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 8px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .price-cell {
+      font-weight: 600;
+      color: #28a745;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn-action {
+      margin: 0;
+      padding: 4px 8px;
+      font-size: 11px;
+      min-width: 60px;
+    }
+    
+    .category-header-cell {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      font-weight: bold;
+      font-size: 16px;
+      padding: 15px;
+      border-left: 4px solid #007bff;
+    }
+    
+    .status-available {
+      color: #28a745;
+      font-weight: 600;
+    }
+    
+    .status-unavailable {
+      color: #dc3545;
+      font-weight: 600;
+    }
+    
+    .food-type-cell {
+      text-transform: capitalize;
+    }
+    
+    .drag-handle {
+      width: 30px;
+      font-size: 16px;
+    }
+    
+    .item-id-cell {
+       font-family: monospace;
+       font-size: 12px;
+       color: #6c757d;
+     }
+     
+     /* Compact Item Card Styles */
+     .category-header-compact {
+       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+       font-weight: bold;
+       font-size: 16px;
+       padding: 12px 15px;
+       border-left: 4px solid #007bff;
+       border-bottom: 1px solid #dee2e6;
+     }
+     
+     .items-grid-container {
+       padding: 0 !important;
+       background-color: #f8f9fa;
+     }
+     
+     .items-grid {
+       display: flex;
+       flex-direction: column;
+       gap: 2px;
+       padding: 5px;
+     }
+     
+     .item-card {
+       background: white;
+       border: 1px solid #dee2e6;
+       border-radius: 6px;
+       padding: 8px 12px;
+       margin-bottom: 2px;
+       transition: all 0.2s ease;
+       cursor: grab;
+     }
+     
+     .item-card:hover {
+       border-color: #007bff;
+       box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+     }
+     
+     .item-card.unavailable {
+       background-color: #f8f9fa;
+       opacity: 0.7;
+     }
+     
+     .item-line-1, .item-line-2, .item-line-3 {
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       line-height: 1.3;
+       min-height: 20px;
+     }
+     
+     .item-line-1 {
+       font-weight: 600;
+       margin-bottom: 3px;
+     }
+     
+     .item-line-2 {
+       font-size: 13px;
+       color: #6c757d;
+       margin-bottom: 3px;
+     }
+     
+     .item-line-3 {
+       justify-content: flex-start;
+     }
+     
+     .drag-handle {
+       color: #6c757d;
+       cursor: grab;
+       font-size: 12px;
+       width: 20px;
+     }
+     
+     .item-id {
+       font-family: monospace;
+       font-size: 11px;
+       color: #6c757d;
+       background: #f8f9fa;
+       padding: 2px 6px;
+       border-radius: 3px;
+       min-width: 35px;
+     }
+     
+     .item-thumb {
+       width: 24px;
+       height: 24px;
+       object-fit: cover;
+       border-radius: 3px;
+       border: 1px solid #dee2e6;
+     }
+     
+     .item-name {
+       flex: 1;
+       font-weight: 600;
+       color: #333;
+       max-width: 200px;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+     }
+     
+     .item-status {
+       font-weight: bold;
+       font-size: 14px;
+       margin-left: auto;
+     }
+     
+     .item-description {
+       flex: 1;
+       font-size: 12px;
+       color: #6c757d;
+       max-width: 300px;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+     }
+     
+     .item-price {
+       font-weight: 600;
+       color: #28a745;
+       font-size: 13px;
+       margin-left: auto;
+       min-width: 80px;
+       text-align: right;
+     }
+     
+     .item-actions {
+       display: flex;
+       gap: 4px;
+     }
+     
+     .btn-xs {
+       padding: 2px 6px;
+       font-size: 10px;
+       line-height: 1.2;
+       border-radius: 3px;
+     }
+     
+     .badge {
+       font-size: 10px;
+       padding: 2px 6px;
+     }
+    
+    .sortable-items {
+      border-left: 3px solid #007bff;
+      margin-left: 10px;
+      min-height: 50px;
+    }
+    
+    .drag-handle:active {
+      cursor: grabbing !important;
+    }
+    
+    .sortable-ghost {
+      opacity: 0.4;
+      background: #f8f9fa !important;
+      border: 2px dashed #007bff !important;
+    }
+    
+    .sortable-chosen {
+      background: #e3f2fd !important;
+      transform: scale(1.02);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .sortable-drag {
+      background: #ffffff !important;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      transform: rotate(2deg);
+    }
+    
+    /* Responsive Design for Admin Panel */
+    
+    /* Large Desktop (1200px and up) */
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1140px;
+      }
+      
+      .card {
+        margin-bottom: 30px;
+      }
+    }
+    
+    /* Desktop (992px to 1199px) */
+    @media (min-width: 992px) and (max-width: 1199px) {
+      .container {
+        max-width: 960px;
+      }
+    }
+    
+    /* Tablet (768px to 991px) */
+    @media (min-width: 768px) and (max-width: 991px) {
+      .container {
+        padding: 0 20px;
+      }
+      
+      .card {
+        margin-bottom: 25px;
+      }
+      
+      .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      
+      .table th,
+      .table td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+      }
+      
+      .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+      
+      .modal-dialog {
+        margin: 20px;
+      }
+    }
+    
+    /* Mobile Extra Small (up to 575px) */
+    @media (max-width: 575px) {
+      .container {
+        padding: 0 8px;
+      }
+      
+      .login-container {
+        padding: 10px 8px;
+        margin: 50px auto;
+      }
+      
+      .card-header h4 {
+        font-size: 0.95rem;
+      }
+      
+      .d-flex.justify-content-between h2 {
+        font-size: 1rem;
+      }
+      
+      .nav-tabs .nav-link {
+        padding: 8px 4px;
+        font-size: 0.75rem;
+      }
+      
+      /* Hide table on very small screens and show card layout */
+      .table-responsive .table {
+        display: none;
+      }
+      
+      .mobile-card-view {
+        display: block;
+      }
+      
+      .btn-xs {
+        padding: 2px 4px;
+        font-size: 0.6rem;
+      }
+      
+      .modal-dialog {
+        margin: 2px;
+        max-width: calc(100% - 4px);
+      }
+      
+      .form-control {
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
+    
+    /* Mobile Large (576px to 767px) */
+    @media (min-width: 576px) and (max-width: 767px) {
+      .mobile-card-view {
+        display: block !important;
+      }
+      
+      .table-responsive .table {
+        display: none;
+      }
+    }
+    
+    /* Mobile Large (481px to 767px) */
+    @media (max-width: 767px) {
+      .container {
+        padding: 0 15px;
+        max-width: 100%;
+      }
+      
+      .login-container {
+        padding: 20px 15px;
+      }
+      
+      .login-container .card {
+        margin: 0;
+        border-radius: 15px;
+      }
+      
+      .card-header h4 {
+        font-size: 1.1rem;
+      }
+      
+      .form-control {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px;
+      }
+      
+      .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+        border-radius: 8px;
+      }
+      
+      /* Dashboard Header */
+      .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .d-flex.justify-content-between h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0;
+      }
+      
+      .d-flex.justify-content-between div {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        justify-content: flex-end;
+      }
+      
+      .d-flex.justify-content-between .btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        flex: 1;
+        max-width: 120px;
+      }
+      
+      /* Navigation Tabs */
+      .nav-tabs {
+        flex-wrap: wrap;
+        border-bottom: none;
+      }
+      
+      .nav-tabs .nav-item {
+        flex: 1;
+        margin-bottom: 5px;
+      }
+      
+      .nav-tabs .nav-link {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+        margin-right: 2px;
+      }
+      
+      /* Cards */
+      .card {
+        margin-bottom: 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .card-header {
+        padding: 15px;
+        border-radius: 15px 15px 0 0;
+      }
+      
+      .card-header h5 {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+      
+      .card-header .d-flex {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+      
+      .card-header .btn {
+        width: 100%;
+        margin-top: 10px;
+      }
+      
+      .card-body {
+        padding: 15px;
+      }
+      
+      /* Tables */
+      .table-responsive {
+        border-radius: 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+      }
+      
+      .table {
+        margin-bottom: 0;
+        font-size: 0.8rem;
+        min-width: 600px; /* Ensure minimum width for horizontal scroll */
+      }
+      
+      .table th {
+        padding: 8px 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        background-color: #f8f9fa;
+        min-width: 60px;
+      }
+      
+      .table td {
+        padding: 8px 4px;
+        vertical-align: middle;
+        word-break: break-word;
+        min-width: 60px;
+      }
+      
+      .table th:first-child,
+      .table td:first-child {
+        padding-left: 8px;
+        position: sticky;
+        left: 0;
+        background-color: #fff;
+        z-index: 10;
+      }
+      
+      .table th:last-child,
+      .table td:last-child {
+        padding-right: 8px;
+      }
+      
+      /* Mobile Card View Styles */
+       .mobile-card-view {
+         padding: 10px 0;
+         display: none;
+       }
+       
+       @media (max-width: 767.98px) {
+         .table-responsive {
+           display: none !important;
+         }
+         
+         .mobile-card-view {
+           display: block !important;
+           visibility: visible !important;
+           opacity: 1 !important;
+           height: auto !important;
+           overflow: visible !important;
+         }
+       }
+       
+       .mobile-card-view .mobile-category-header {
+         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+         font-weight: bold;
+         font-size: 1rem;
+         padding: 12px 15px;
+         border-left: 4px solid #007bff;
+         margin: 15px 0 10px 0;
+         border-radius: 6px;
+         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+       }
+       
+       .mobile-card-view .item-mobile-card {
+         background: white;
+         border: 1px solid #dee2e6;
+         border-radius: 8px;
+         padding: 12px;
+         margin-bottom: 10px;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         transition: all 0.2s ease;
+       }
+       
+       .mobile-card-view .item-mobile-card:hover {
+         border-color: #007bff;
+         box-shadow: 0 4px 8px rgba(0,123,255,0.15);
+       }
+       
+       .mobile-card-view .item-mobile-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: flex-start;
+         margin-bottom: 8px;
+       }
+       
+       .mobile-card-view .item-mobile-name {
+         font-weight: 600;
+         font-size: 0.9rem;
+         color: #333;
+         flex: 1;
+         margin-right: 10px;
+         line-height: 1.3;
+       }
+       
+       .mobile-card-view .item-mobile-status {
+         font-size: 0.75rem;
+         padding: 3px 8px;
+         border-radius: 12px;
+         font-weight: 600;
+         white-space: nowrap;
+       }
+       
+       .mobile-card-view .item-mobile-details {
+         font-size: 0.8rem;
+         color: #666;
+         margin-bottom: 8px;
+         line-height: 1.4;
+       }
+       
+       .mobile-card-view .item-mobile-details > div {
+         margin-bottom: 4px;
+         display: flex;
+         align-items: center;
+         flex-wrap: wrap;
+       }
+       
+       .mobile-card-view .item-mobile-details strong {
+         color: #333;
+         margin-right: 8px;
+         min-width: 80px;
+         font-size: 0.75rem;
+       }
+       
+       .mobile-card-view .category-mobile-header {
+         background: linear-gradient(135deg, #007bff, #0056b3);
+         color: white;
+         padding: 12px 15px;
+         margin: 15px 0 10px 0;
+         border-radius: 8px;
+         font-weight: bold;
+         font-size: 1.1em;
+         text-align: center;
+         box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+       }
+       
+       .mobile-card-view .item-mobile-prices {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 10px;
+         padding: 8px;
+         background-color: #f8f9fa;
+         border-radius: 6px;
+       }
+       
+       .mobile-card-view .item-mobile-prices > div {
+         font-size: 0.85rem;
+         font-weight: 600;
+         color: #28a745;
+       }
+       
+       .mobile-card-view .item-mobile-actions {
+         display: flex;
+         gap: 6px;
+         flex-wrap: wrap;
+       }
+       
+       .mobile-card-view .item-mobile-actions .btn {
+         flex: 1;
+         min-width: 70px;
+         font-size: 0.8rem;
+         padding: 6px 8px;
+         border-radius: 6px;
+       }
+      
+      /* Action buttons in tables */
+      .btn-xs {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        margin: 1px;
+      }
+      
+      /* Drag and drop items */
+      .category-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+      }
+      
+      .category-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+      
+      .category-info h6 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+      
+      .category-actions {
+        justify-content: space-between;
+        width: 100%;
+      }
+      
+      .item-row {
+        padding: 8px;
+        margin-bottom: 5px;
+        border-radius: 6px;
+      }
+      
+      .item-content {
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      .item-info {
+        flex: 1;
+        text-align: left;
+        min-width: 0;
+        padding-right: 8px;
+      }
+      
+      .item-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      
+      .item-description {
+        font-size: 0.7rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #666;
+        margin: 0;
+        max-width: 150px;
+      }
+      
+      .item-price {
+        font-size: 0.75rem;
+        text-align: right;
+        margin-left: 8px;
+        min-width: 60px;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+      
+      .item-actions {
+        justify-content: flex-end;
+        gap: 3px;
+        margin-left: 8px;
+        flex-shrink: 0;
+      }
+      
+      /* Modals - Desktop Optimized */
+    .modal-dialog {
+      margin: 30px auto;
+      max-width: 600px;
+    }
+    
+    /* Large modal for edit item */
+    .modal-dialog.modal-lg {
+      max-width: 800px;
+    }
+    
+    .modal-content {
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: none;
+    }
+    
+    .modal-header {
+      padding: 20px 25px;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-bottom: none;
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .btn-close {
+      filter: brightness(0) invert(1);
+      opacity: 0.8;
+    }
+    
+    .btn-close:hover {
+      opacity: 1;
+    }
+    
+    .modal-body {
+      padding: 25px;
+      background-color: #fafbfc;
+    }
+    
+    .modal-footer {
+      padding: 20px 25px;
+      border-radius: 0 0 12px 12px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+    }
+      
+      /* Form elements - Desktop Optimized */
+      .form-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+      }
+      
+      .form-control,
+      .form-select {
+        font-size: 15px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        background-color: white;
+      }
+      
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background-color: white;
+      }
+      
+      .form-control:hover,
+      .form-select:hover {
+        border-color: #ced4da;
+      }
+      
+      .form-check {
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+      }
+      
+      .form-check-input {
+        margin-top: 0.25em;
+      }
+      
+      .form-check-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #495057;
+      }
+      
+      /* File upload */
+      .form-control[type="file"] {
+        padding: 10px 16px;
+        background-color: white;
+      }
+      
+      /* Current image display */
+      #current-image-container {
+        text-align: center;
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        border: 2px dashed #e9ecef;
+      }
+      
+      #current-item-image {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      /* Alerts */
+      .alert {
+        padding: 15px 20px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+      }
+      
+      .alert-danger {
+         background-color: #f8d7da;
+         color: #721c24;
+       }
+       
+       /* Button enhancements */
+       .btn-lg {
+         padding: 12px 24px;
+         font-size: 1.1rem;
+         font-weight: 500;
+         border-radius: 8px;
+         transition: all 0.3s ease;
+       }
+       
+       .btn-primary {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         border: none;
+       }
+       
+       .btn-primary:hover {
+         background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+         transform: translateY(-1px);
+         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+       }
+       
+       .btn-outline-secondary {
+         border: 2px solid #6c757d;
+         color: #6c757d;
+         font-weight: 500;
+       }
+       
+       .btn-outline-secondary:hover {
+         background-color: #6c757d;
+         border-color: #6c757d;
+         transform: translateY(-1px);
+       }
+       
+       /* Input group styling */
+       .input-group-text {
+         background-color: #f8f9fa;
+         border: 2px solid #e9ecef;
+         border-right: none;
+         font-weight: 600;
+         color: #495057;
+       }
+       
+       .input-group .form-control {
+         border-left: none;
+       }
+       
+       .input-group .form-control:focus {
+         border-left: none;
+         box-shadow: none;
+       }
+       
+       .input-group:focus-within .input-group-text {
+         border-color: #667eea;
+         background-color: rgba(102, 126, 234, 0.1);
+       }
+    }
+    
+    /* Mobile Small (320px to 480px) */
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 10px;
+      }
+      
+      .login-container {
+        padding: 15px 10px;
+      }
+      
+      .card-header h4 {
+        font-size: 1rem;
+      }
+      
+      .d-flex.justify-content-between h2 {
+        font-size: 1.1rem;
+      }
+      
+      .nav-tabs .nav-link {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+      }
+      
+      .table {
+        font-size: 0.75rem;
+      }
+      
+      .table th,
+      .table td {
+        padding: 6px 4px;
+      }
+      
+      .btn-xs {
+        padding: 3px 6px;
+        font-size: 0.65rem;
+      }
+      
+      .category-info h6 {
+        font-size: 0.85rem;
+      }
+      
+      .item-name {
+        font-size: 0.8rem;
+      }
+      
+      .item-description {
+        font-size: 0.7rem;
+      }
+      
+      .item-price {
+        font-size: 0.75rem;
+      }
+      
+      .modal-dialog {
+        margin: 5px;
+        max-width: calc(100% - 10px);
+      }
+      
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding: 12px;
+      }
+      
+      .modal-title {
+        font-size: 0.9rem;
+      }
+      
+      /* Improve filter controls on small screens */
+      .row.mb-3 .col-md-4 {
+        margin-bottom: 10px;
+      }
+      
+      .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+      
+      .form-control,
+      .form-select {
+        font-size: 14px;
+        padding: 8px;
+      }
+      
+      /* Better button spacing */
+      .card-header .d-flex {
+        gap: 8px;
+      }
+      
+      .card-header .btn {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+    }
+    
+    /* Cross-Browser Compatibility for Admin Panel */
+    
+    /* Flexbox fallbacks */
+    .d-flex {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+    }
+    
+    .justify-content-between {
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+    }
+    
+    .align-items-center {
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+    }
+    
+    /* Transform fallbacks */
+    .sortable-chosen {
+      -webkit-transform: scale(1.02);
+      -moz-transform: scale(1.02);
+      -ms-transform: scale(1.02);
+      transform: scale(1.02);
+    }
+    
+    .sortable-drag {
+      -webkit-transform: rotate(2deg);
+      -moz-transform: rotate(2deg);
+      -ms-transform: rotate(2deg);
+      transform: rotate(2deg);
+    }
+    
+    /* Border-radius fallbacks */
+    .card {
+      -webkit-border-radius: 15px;
+      -moz-border-radius: 15px;
+      border-radius: 15px;
+    }
+    
+    .btn {
+      -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+    }
+    
+    /* Box-shadow fallbacks */
+    .card {
+      -webkit-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      -moz-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* Transition fallbacks */
+    .btn,
+    .nav-link,
+    .category-item,
+    .item-row {
+      -webkit-transition: all 0.3s ease;
+      -moz-transition: all 0.3s ease;
+      -o-transition: all 0.3s ease;
+      transition: all 0.3s ease;
+    }
+    
+    /* Touch-action for better mobile interaction */
+    .btn,
+    .nav-link,
+    .drag-handle,
+    .table-responsive {
+      touch-action: manipulation;
+    }
+    
+    /* Prevent text size adjust on orientation change */
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    @supports not (scroll-behavior: smooth) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    
+    /* Improve table scrolling on mobile */
+    .table-responsive {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Better focus styles for accessibility */
+    .btn:focus,
+    .form-control:focus,
+    .nav-link:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Form -->
+  <div id="login-section" class="login-container">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Admin Login</h4>
+      </div>
+      <div class="card-body">
+        <form id="login-form">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" autocomplete="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" autocomplete="current-password" required>
+          </div>
+          <div class="alert alert-danger d-none" id="login-error"></div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="admin-dashboard" class="admin-layout d-none">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="fas fa-utensils"></i> Admin Panel</h4>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item">
+          <a href="#" class="nav-link active" data-section="categories">
+            <i class="fas fa-list"></i>
+            Categories
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="items">
+            <i class="fas fa-hamburger"></i>
+            Menu Items
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="settings">
+            <i class="fas fa-cog"></i>
+            Settings
+          </a>
+        </div>
+        <hr style="margin: 1rem 0.75rem; border-color: rgba(255,255,255,0.1);">
+        <div class="nav-item">
+          <a href="#" class="nav-link" id="change-password-btn">
+            <i class="fas fa-key"></i>
+            Change Password
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <h2 id="page-title">Categories</h2>
+        <div class="topbar-actions">
+          <button class="mobile-toggle btn btn-outline-secondary d-lg-none">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="content-area">
+        <div id="content-sections">
+          <!-- Categories Section -->
+          <div class="content-section active" id="categories">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Manage Categories</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                  <i class="fas fa-plus"></i> Add Category
+                </button>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive" style="display: none !important;">
+                  <table class="table table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th width="60" class="text-center"><i class="fas fa-sort"></i></th>
+                        <th width="80">ID</th>
+                        <th>Category Name</th>
+                        <th width="120" class="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="categories-table-body">
+                      <!-- Categories will be loaded here -->
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Mobile Card View for Categories -->
+                <div class="mobile-card-view">
+                  <div id="categories-mobile-cards">
+                    <!-- Mobile category cards will be loaded here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items Section -->
+          <div class="content-section" id="items">
+            <div class="card">
+              <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="mb-0"><i class="fas fa-hamburger me-2"></i>Manage Menu Items</h5>
+                  <div class="d-flex gap-2 align-items-center">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="show-all-items" checked>
+                      <label class="form-check-label" for="show-all-items">Show All</label>
+                    </div>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                      <i class="fas fa-plus"></i> Add Item
+                    </button>
+                  </div>
+                </div>
+                <!-- Compact Filter Controls -->
+                <div class="row g-2">
+                  <div class="col-md-3 col-sm-6">
+                    <select class="form-select form-select-sm" id="filter-category">
+                      <option value="">All Categories</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 col-sm-6">
+                    <select class="form-select form-select-sm" id="sort-by">
+                      <option value="default">Default Sort</option>
+                      <option value="name">Name (A-Z)</option>
+                      <option value="name-desc">Name (Z-A)</option>
+                      <option value="category">Category</option>
+                      <option value="price-asc">Price ↑</option>
+                      <option value="price-desc">Price ↓</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text"><i class="fas fa-search"></i></span>
+                      <input type="text" class="form-control" id="search-items" placeholder="Search items..." autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th width="40" class="text-center"><i class="fas fa-grip-vertical"></i></th>
+                        <th width="60">ID</th>
+                        <th>Item</th>
+                        <th width="80" class="text-center">Half</th>
+                        <th width="80" class="text-center">Full</th>
+                        <th width="90" class="d-none d-lg-table-cell text-center">Type</th>
+                        <th width="100" class="d-none d-md-table-cell">Category</th>
+                        <th width="80" class="text-center">Status</th>
+                        <th width="120" class="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="items-table-body">
+                      <!-- Items will be loaded here -->
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Mobile Card View -->
+                <div class="mobile-card-view">
+                  <div id="items-mobile-cards">
+                    <!-- Mobile cards will be loaded here -->
+                  </div>
+                </div>
+          </div>
+        </div>
+      </div>
+
+          <!-- Settings Section -->
+          <div class="content-section" id="settings">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Restaurant Settings</h5>
+              </div>
+              <div class="card-body">
+                <form id="restaurant-settings-form" enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="restaurant-name" class="form-label">Restaurant Name</label>
+                    <input type="text" class="form-control" id="restaurant-name" autocomplete="organization" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-address" class="form-label">Address</label>
+                    <textarea class="form-control" id="restaurant-address" rows="3"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="restaurant-phone" autocomplete="tel">
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="restaurant-email" autocomplete="email">
+                  </div>
+
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="restaurant-hours" class="form-label">Operational Hours</label>
+                    <input type="text" class="form-control" id="restaurant-hours" placeholder="e.g. 10:00 AM - 10:00 PM">
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-gst" class="form-label">GST Number</label>
+                    <input type="text" class="form-control" id="restaurant-gst">
+                    <div class="form-check mt-2">
+                      <input class="form-check-input" type="checkbox" id="show-gst">
+                      <label class="form-check-label" for="show-gst">Show GST Number on Menu</label>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-license" class="form-label">Trade License Number</label>
+                    <input type="text" class="form-control" id="restaurant-license">
+                    <div class="form-check mt-2">
+                      <input class="form-check-input" type="checkbox" id="show-trade-license">
+                <label class="form-check-label" for="show-trade-license">Show Trade License on Menu</label>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="restaurant-logo" class="form-label">Restaurant Logo</label>
+                    <div id="current-logo-container" class="mb-2" style="display: none;">
+                      <img id="current-restaurant-logo" src="" alt="Restaurant logo" style="max-width: 100%; max-height: 150px;">
+                      <p class="mt-1">Current logo</p>
+                    </div>
+                    <input type="file" class="form-control" id="restaurant-logo" accept="image/*">
+                    <div class="form-text">Upload a logo image (optional, max 5MB)</div>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-danger d-none" id="settings-error"></div>
+              <div class="alert alert-success d-none" id="settings-success"></div>
+              <div class="text-end mt-3">
+                <button type="button" class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="add-category-form">
+            <div class="mb-3">
+              <label for="category-name" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="category-name" autocomplete="off" required>
+            </div>
+            <div class="alert alert-danger d-none" id="add-category-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="save-category-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Category Modal -->
+  <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="edit-category-form">
+            <input type="hidden" id="edit-category-id">
+            <div class="mb-4">
+              <label for="edit-category-name" class="form-label">Category Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="edit-category-name" autocomplete="off" required placeholder="Enter category name">
+              <div class="form-text">📂 Choose a descriptive name for this category</div>
+            </div>
+            <div class="alert alert-danger d-none" id="edit-category-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancel
+          </button>
+          <button type="button" class="btn btn-primary btn-lg" id="update-category-btn">
+            <i class="fas fa-save me-2"></i>Update Category
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="add-item-form" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="item-name" class="form-label">Item Name</label>
+              <input type="text" class="form-control" id="item-name" autocomplete="off" required>
+            </div>
+            <div class="mb-3">
+              <label for="item-description" class="form-label">Description</label>
+              <textarea class="form-control" id="item-description" rows="3" placeholder="Enter item description (optional)"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="item-price-half" class="form-label">Half Plate Price</label>
+                  <input type="text" class="form-control" id="item-price-half" placeholder="₹50 (Optional)" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="item-price-full" class="form-label">Full Plate Price</label>
+                  <input type="text" class="form-control" id="item-price-full" autocomplete="off" required placeholder="₹100">
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="item-food-type" class="form-label">Food Type</label>
+              <select class="form-select" id="item-food-type" required>
+                <option value="veg" selected>Vegetarian</option>
+                <option value="non-veg">Non-Vegetarian</option>
+                <option value="egg">Contains Egg</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="item-category" class="form-label">Category</label>
+              <select class="form-select" id="item-category" required>
+                <!-- Categories will be loaded here -->
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="item-image" class="form-label">Item Image</label>
+              <input type="file" class="form-control" id="item-image" accept="image/*">
+              <div class="form-text">Upload an image of the item (optional, max 5MB)</div>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="item-available" checked>
+              <label class="form-check-label" for="item-available">Available</label>
+            </div>
+            <div class="alert alert-danger d-none" id="add-item-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="save-item-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal fade" id="editItemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="edit-item-form" enctype="multipart/form-data">
+            <input type="hidden" id="edit-item-id">
+            
+            <!-- Basic Information Section -->
+            <div class="row">
+              <div class="col-md-8">
+                <div class="mb-4">
+                  <label for="edit-item-name" class="form-label">Item Name</label>
+                  <input type="text" class="form-control" id="edit-item-name" autocomplete="off" required placeholder="Enter item name">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4 form-check">
+                  <input type="checkbox" class="form-check-input" id="edit-item-available">
+                  <label class="form-check-label" for="edit-item-available">Item Available</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label for="edit-item-description" class="form-label">Description</label>
+              <textarea class="form-control" id="edit-item-description" rows="3" placeholder="Enter item description (optional)"></textarea>
+            </div>
+            
+            <!-- Pricing Section -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="edit-item-price-half" class="form-label">Half Plate Price</label>
+                  <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    <input type="text" class="form-control" id="edit-item-price-half" placeholder="50 (Optional)" autocomplete="off">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="edit-item-price-full" class="form-label">Full Plate Price <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    <input type="text" class="form-control" id="edit-item-price-full" autocomplete="off" required placeholder="100">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category & Type Section -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="edit-item-food-type" class="form-label">Food Type <span class="text-danger">*</span></label>
+                  <select class="form-select" id="edit-item-food-type" required>
+                    <option value="">Select food type</option>
+                    <option value="veg">🥬 Vegetarian</option>
+                    <option value="non-veg">🍖 Non-Vegetarian</option>
+                    <option value="egg">🥚 Contains Egg</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="edit-item-category" class="form-label">Category <span class="text-danger">*</span></label>
+                  <select class="form-select" id="edit-item-category" required>
+                    <option value="">Select category</option>
+                    <!-- Categories will be loaded here -->
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Image Section -->
+            <div class="mb-4">
+              <label for="edit-item-image" class="form-label">Item Image</label>
+              <div id="current-image-container" class="mb-3" style="display: none;">
+                <img id="current-item-image" src="" alt="Current item image" style="max-width: 100%; max-height: 200px;">
+                <p class="mt-2 mb-0 text-muted">Current image</p>
+              </div>
+              <input type="file" class="form-control" id="edit-item-image" accept="image/*">
+              <div class="form-text">📷 Upload a new image (optional, max 5MB). Recommended size: 400x300px</div>
+            </div>
+            
+            <div class="alert alert-danger d-none" id="edit-item-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancel
+          </button>
+          <button type="button" class="btn btn-primary btn-lg" id="update-item-btn">
+            <i class="fas fa-save me-2"></i>Update Item
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="change-password-form">
+            <div class="mb-3">
+              <label for="current-password" class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="current-password" autocomplete="current-password" required>
+            </div>
+            <div class="mb-3">
+              <label for="new-password" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="new-password" autocomplete="new-password" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirm-password" class="form-label">Confirm New Password</label>
+              <input type="password" class="form-control" id="confirm-password" autocomplete="new-password" required>
+            </div>
+            <div class="alert alert-danger d-none" id="change-password-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="update-password-btn">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="delete-confirm-message">Are you sure you want to delete this item?</p>
+          <input type="hidden" id="delete-item-id">
+          <input type="hidden" id="delete-item-type">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="admin.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

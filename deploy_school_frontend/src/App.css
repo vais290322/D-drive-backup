@@ -1,0 +1,34 @@
+/* Ensure the root container takes up full viewport */
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    display: flex;
+  }
+  
+  /* App layout styling */
+  .app-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Sidebar styling */
+  .app-layout > .app-sidebar {
+    flex-shrink: 0; /* Sidebar should not grow */
+  }
+  
+  /* Main content styling */
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow the main content to grow */
+    height: 100%;
+  }
+  
+  /* Content area styling */
+  .content-area {
+    flex-grow: 1; /* Make the outlet take up the remaining space */
+    overflow-y: auto; /* Optional: Add scroll if content overflows */
+    background: #000000; /* Optional background for the content area */
+  }
+  

@@ -1,0 +1,11 @@
+for add category 
+http://192.168.0.123:9000/allcategory ----- get, 
+http://192.168.0.123:9000/category -----  post
+http://192.168.0.123:9000/category/_id ----- put
+http://192.168.0.123:9000/category/_id ----- delete
+
+{
+    name,
+    description,
+    image
+}

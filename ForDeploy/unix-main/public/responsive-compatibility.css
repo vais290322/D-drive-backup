@@ -1,0 +1,398 @@
+/* Enhanced Cross-Browser Compatibility and Responsive Design */
+/* This file provides additional CSS for better browser support and mobile responsiveness */
+
+/* CSS Reset for better cross-browser consistency */
+* {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+/* Normalize font rendering across browsers */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Improve image rendering */
+img {
+  max-width: 100%;
+  height: auto;
+  -ms-interpolation-mode: bicubic;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Better button styling across browsers */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Improve form input styling */
+input,
+textarea,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  outline: none;
+}
+
+/* Fix iOS input zoom */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+/* Prevent horizontal scrolling on mobile */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Better touch targets for mobile */
+.btn,
+button,
+a,
+input,
+textarea,
+select {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Improve table responsiveness */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/* Better modal positioning on mobile */
+.modal {
+  padding: 0 !important;
+}
+
+.modal-dialog {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Improve dropdown menus on mobile */
+.dropdown-menu {
+  position: absolute !important;
+  transform: none !important;
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Better focus indicators for accessibility */
+*:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse users */
+.js-focus-visible *:focus:not(.focus-visible) {
+  outline: none;
+}
+
+/* Improve animation performance */
+.animate-on-scroll,
+.item,
+.category-item,
+.btn {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Better print styles */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .btn,
+  .whatsapp-float,
+  .language-switcher {
+    display: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .item {
+    border: 2px solid;
+  }
+  
+  .btn {
+    border: 2px solid;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border-color: #4a5568;
+  }
+  
+  .table {
+    color: #e2e8f0;
+  }
+  
+  .table th {
+    background-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .form-control {
+    background-color: #4a5568;
+    color: #e2e8f0;
+    border-color: #718096;
+  }
+}
+
+/* Internet Explorer specific fixes */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .d-flex {
+    display: -ms-flexbox;
+  }
+  
+  .item-details {
+    -ms-flex-align: center;
+  }
+  
+  .price-container {
+    -ms-flex-pack: justify;
+  }
+}
+
+/* Safari specific fixes */
+@supports (-webkit-appearance: none) {
+  .form-control {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .btn {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+  .item {
+    background-clip: padding-box;
+  }
+}
+
+/* Edge specific fixes */
+@supports (-ms-ime-align: auto) {
+  .table-responsive {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .header {
+    padding: 10px 0;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .menu {
+    padding: 15px;
+  }
+  
+  .item {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .modal-dialog {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Very small screens (smartwatches, etc.) */
+@media (max-width: 280px) {
+  h1 {
+    font-size: 1.2rem;
+  }
+  
+  .item {
+    padding: 8px;
+  }
+  
+  .item-name {
+    font-size: 0.9rem;
+  }
+  
+  .item-description {
+    font-size: 0.75rem;
+  }
+  
+  .btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Large screens (4K, etc.) */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  h1 {
+    font-size: 3.5rem;
+  }
+  
+  .item {
+    padding: 30px;
+  }
+  
+  .item-name {
+    font-size: 1.5rem;
+  }
+}
+
+/* Hover effects only for devices that support hover */
+@media (hover: hover) {
+  .item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Touch-specific styles */
+@media (hover: none) {
+  .item:active {
+    transform: scale(0.98);
+  }
+  
+  .btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .item-image {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Foldable devices */
+@media (max-width: 280px) and (min-height: 653px) {
+  .container {
+    padding: 0 5px;
+  }
+  
+  .item {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Tablet landscape specific */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .nav-tabs .nav-link {
+    padding: 12px 20px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px 10px;
+  }
+}
+
+/* Better scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #007bff;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #007bff;
+  color: white;
+}

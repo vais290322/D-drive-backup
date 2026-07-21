@@ -1,0 +1,466 @@
+# Maquam Holidays - System Requirements
+
+## System Requirements
+
+### Operating System
+- macOS 10.15 or later
+- Ubuntu 20.04 LTS or later
+- Windows 10 or later
+- Any Linux distribution with systemd support
+
+### Software Requirements
+
+#### Node.js
+- Version: 18.x or higher (20.x recommended)
+- Download: https://nodejs.org/
+- Verify: `node -v` should show v18.0.0 or higher
+
+#### MongoDB
+- Version: 6.0 or higher (7.0 recommended)
+- Download: https://www.mongodb.com/try/download/community
+- Verify: `mongosh --version` should show 2.x.x or higher
+
+#### Package Manager
+- pnpm (recommended): `npm install -g pnpm`
+- OR npm: Comes with Node.js
+- Verify: `pnpm -v` or `npm -v`
+
+### Hardware Requirements
+
+#### Minimum
+- CPU: 2 cores
+- RAM: 4 GB
+- Storage: 10 GB free space
+- Network: Broadband internet connection
+
+#### Recommended
+- CPU: 4 cores or more
+- RAM: 8 GB or more
+- Storage: 20 GB free space (SSD recommended)
+- Network: High-speed broadband
+
+---
+
+## Frontend Dependencies
+
+### Core Dependencies
+```json
+{
+  "react": "^18.3.1",
+  "react-dom": "^18.3.1",
+  "react-router-dom": "^7.1.1",
+  "typescript": "~5.6.2",
+  "vite": "^6.0.5"
+}
+```
+
+### UI & Styling
+```json
+{
+  "tailwindcss": "^3.4.17",
+  "tailwindcss-animate": "^1.0.7",
+  "@radix-ui/react-*": "Various versions",
+  "lucide-react": "^0.468.0",
+  "class-variance-authority": "^0.7.1",
+  "clsx": "^2.1.1",
+  "tailwind-merge": "^2.6.0"
+}
+```
+
+### Form & Validation
+```json
+{
+  "react-hook-form": "^7.54.2",
+  "zod": "^3.24.1",
+  "@hookform/resolvers": "^3.9.1"
+}
+```
+
+### HTTP & API
+```json
+{
+  "axios": "^1.7.9"
+}
+```
+
+### Payment
+```json
+{
+  "razorpay": "^2.9.4"
+}
+```
+
+### Utilities
+```json
+{
+  "date-fns": "^4.1.0",
+  "qrcode": "^1.5.4",
+  "sonner": "^1.7.3",
+  "next-themes": "^0.4.4"
+}
+```
+
+---
+
+## Backend Dependencies
+
+### Core Dependencies
+```json
+{
+  "express": "^4.21.2",
+  "mongodb": "^6.12.0",
+  "mongoose": "^8.9.3",
+  "typescript": "^5.7.2"
+}
+```
+
+### Authentication & Security
+```json
+{
+  "jsonwebtoken": "^9.0.2",
+  "bcryptjs": "^2.4.3",
+  "cookie-parser": "^1.4.7",
+  "cors": "^2.8.5"
+}
+```
+
+### Payment Integration
+```json
+{
+  "razorpay": "^2.9.4"
+}
+```
+
+### File Upload
+```json
+{
+  "multer": "^1.4.5-lts.1"
+}
+```
+
+### Environment & Configuration
+```json
+{
+  "dotenv": "^16.4.7"
+}
+```
+
+### Development Tools
+```json
+{
+  "nodemon": "^3.1.9",
+  "ts-node": "^10.9.2",
+  "concurrently": "^9.1.2"
+}
+```
+
+### Type Definitions
+```json
+{
+  "@types/express": "^5.0.0",
+  "@types/cors": "^2.8.17",
+  "@types/jsonwebtoken": "^9.0.7",
+  "@types/bcryptjs": "^2.4.6",
+  "@types/multer": "^1.4.12",
+  "@types/cookie-parser": "^1.4.7"
+}
+```
+
+---
+
+## Environment Variables Required
+
+### MongoDB Configuration
+```
+MONGODB_URI=mongodb://localhost:27017/maquam_holidays
+```
+
+### Server Configuration
+```
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+```
+
+### JWT Configuration
+```
+JWT_SECRET=<minimum-32-characters-secret>
+```
+
+### Razorpay Configuration
+```
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxx
+RAZORPAY_KEY_SECRET=<your-secret>
+```
+
+### Frontend Configuration
+```
+VITE_API_URL=http://localhost:5000/api
+VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxx
+VITE_APP_ID=app-8farl2rn17nl
+VITE_API_ENV=development
+```
+
+---
+
+## Installation Commands
+
+### Install Frontend Dependencies
+```bash
+cd /path/to/app-8farl2rn17nl
+pnpm install
+# OR
+npm install
+```
+
+### Install Backend Dependencies
+```bash
+cd /path/to/app-8farl2rn17nl/server
+npm install
+```
+
+---
+
+## Development Tools
+
+### Code Editor (Recommended)
+- Visual Studio Code: https://code.visualstudio.com/
+- WebStorm: https://www.jetbrains.com/webstorm/
+
+### VS Code Extensions (Recommended)
+- ESLint
+- Prettier
+- Tailwind CSS IntelliSense
+- MongoDB for VS Code
+- Thunder Client (API testing)
+- GitLens
+
+### Browser (Recommended)
+- Google Chrome (latest)
+- Mozilla Firefox (latest)
+- Safari (latest)
+
+### API Testing Tools
+- Thunder Client (VS Code extension)
+- Postman: https://www.postman.com/
+- Insomnia: https://insomnia.rest/
+- curl (command line)
+
+### Database Management Tools
+- MongoDB Compass: https://www.mongodb.com/products/compass
+- mongosh (MongoDB Shell): Comes with MongoDB
+- Studio 3T: https://studio3t.com/
+
+---
+
+## Third-Party Services
+
+### Razorpay (Payment Gateway)
+- Account: https://dashboard.razorpay.com/
+- Documentation: https://razorpay.com/docs/
+- Test Mode: Available for development
+- Live Mode: Requires KYC verification
+
+### MongoDB Atlas (Optional - Cloud Database)
+- Account: https://www.mongodb.com/cloud/atlas
+- Free Tier: Available (512 MB storage)
+- Paid Plans: Starting from $9/month
+
+---
+
+## Network Requirements
+
+### Ports Used
+- Frontend: 5173 (Vite dev server)
+- Backend: 5000 (Express server)
+- MongoDB: 27017 (Database)
+
+### Firewall Configuration
+Ensure the following ports are open:
+- Inbound: 5173, 5000 (development)
+- Outbound: 443 (HTTPS), 27017 (MongoDB)
+
+### External Services
+- Razorpay API: https://api.razorpay.com
+- MongoDB Atlas: *.mongodb.net (if using cloud)
+
+---
+
+## Browser Compatibility
+
+### Supported Browsers
+- Chrome: 90+
+- Firefox: 88+
+- Safari: 14+
+- Edge: 90+
+
+### Not Supported
+- Internet Explorer (all versions)
+- Opera Mini
+- UC Browser
+
+---
+
+## Production Requirements
+
+### Additional Requirements for Production
+
+#### SSL Certificate
+- Let's Encrypt (free): https://letsencrypt.org/
+- Cloudflare (free): https://www.cloudflare.com/
+- Commercial SSL providers
+
+#### Process Manager
+- PM2: `npm install -g pm2`
+- Forever: `npm install -g forever`
+- systemd (Linux)
+
+#### Reverse Proxy
+- Nginx (recommended)
+- Apache
+- Caddy
+
+#### Monitoring Tools
+- PM2 Plus: https://pm2.io/
+- New Relic: https://newrelic.com/
+- Datadog: https://www.datadoghq.com/
+
+#### Backup Solutions
+- MongoDB Atlas Backup (cloud)
+- mongodump/mongorestore (local)
+- Automated backup scripts
+
+---
+
+## Security Requirements
+
+### SSL/TLS
+- TLS 1.2 or higher
+- Valid SSL certificate
+- HTTPS enforced
+
+### Authentication
+- JWT tokens with secure secret (64+ characters)
+- Password hashing with bcrypt (10+ salt rounds)
+- Secure cookie settings (httpOnly, secure, sameSite)
+
+### Database
+- MongoDB authentication enabled
+- Strong database password
+- Network access restrictions
+- Regular backups
+
+### API Security
+- CORS properly configured
+- Rate limiting (recommended)
+- Input validation
+- SQL injection prevention (via Mongoose)
+- XSS protection
+
+---
+
+## Performance Requirements
+
+### Response Times
+- API endpoints: < 200ms (average)
+- Page load: < 2 seconds (first load)
+- Page load: < 500ms (subsequent loads)
+
+### Concurrent Users
+- Development: 10-50 users
+- Production: 1000+ users (with proper scaling)
+
+### Database
+- Connection pooling enabled
+- Indexes on frequently queried fields
+- Query optimization
+
+---
+
+## Backup & Recovery
+
+### Database Backup
+```bash
+# Backup
+mongodump --uri="mongodb://localhost:27017/maquam_holidays" --out=/backup/path
+
+# Restore
+mongorestore --uri="mongodb://localhost:27017/maquam_holidays" /backup/path/maquam_holidays
+```
+
+### Backup Schedule (Recommended)
+- Daily: Automated backups
+- Weekly: Full system backup
+- Monthly: Archive backups
+
+---
+
+## Support & Documentation
+
+### Official Documentation
+- MongoDB: https://docs.mongodb.com/
+- Express: https://expressjs.com/
+- React: https://react.dev/
+- TypeScript: https://www.typescriptlang.org/docs/
+- Tailwind CSS: https://tailwindcss.com/docs
+- Razorpay: https://razorpay.com/docs/
+
+### Community Resources
+- Stack Overflow
+- GitHub Issues
+- MongoDB Community Forums
+- React Community
+
+---
+
+## Version History
+
+### Current Version: 1.0.0
+- MongoDB-based backend
+- JWT authentication
+- Razorpay payment integration
+- Multi-role system
+- Hotel booking system
+
+### Previous Versions
+- 0.x.x: Supabase-based backend (deprecated)
+
+---
+
+## License Requirements
+
+### Open Source Dependencies
+All dependencies are licensed under permissive licenses:
+- MIT License (majority)
+- Apache License 2.0
+- BSD License
+
+### Commercial Services
+- Razorpay: Requires account and KYC
+- MongoDB Atlas: Free tier available, paid plans for production
+
+---
+
+## Compliance & Standards
+
+### Data Protection
+- GDPR compliance (for EU users)
+- Data encryption at rest and in transit
+- User consent management
+- Right to be forgotten
+
+### Payment Standards
+- PCI DSS compliance (via Razorpay)
+- Secure payment processing
+- Transaction logging
+
+### Accessibility
+- WCAG 2.1 Level AA (target)
+- Keyboard navigation
+- Screen reader support
+- Color contrast compliance
+
+---
+
+**Last Updated:** 2025-12-26
+**Document Version:** 1.0.0

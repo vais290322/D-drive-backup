@@ -1,0 +1,29 @@
+/**
+ * Authentication Routes
+ */
+
+import express from 'express';
+import {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+  updateProfile,
+  changePassword,
+} from '../controllers/authController';
+import { authenticate } from '../middleware/auth';
+import { authRateLimiter } from '../middleware/security';
+
+const router = express.Router();
+
+// Public routes with strict rate limiting
+router.post('/register', authRateLimiter, register);
+router.post('/login', authRateLimiter, login);
+router.post('/logout', logout);
+
+// Protected routes
+router.get('/me', authenticate, getCurrentUser);
+router.put('/profile', authenticate, updateProfile);
+router.put('/change-password', authenticate, changePassword);
+
+export default router;

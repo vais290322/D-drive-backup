@@ -1,0 +1,186 @@
+{
+  "booking_type": "flight",
+  "check_in_date": "",
+  "check_out_date": "",
+  "guests": 1,
+  "room_type": "Standard",
+  "guest_name": "VAIS DT2",
+  "guest_email": "vais@maquamholidays.com",
+  "guest_phone": "9876543210",
+  "special_requests": "",
+  "total_amount": 215.57,
+  "flight_data": {
+    "id": "1",
+    "airline": "SV",
+    "flight_number": "SV759",
+    "departure_city": "DEL",
+    "arrival_city": "JED",
+    "departure_time": "2026-02-23T20:05:00",
+    "arrival_time": "2026-02-23T23:45:00",
+    "price": 215.57,
+    "available_seats": 9,
+    "is_direct": true,
+    "created_at": "2026-02-23T11:53:32.960Z",
+    "source_data": {
+      "type": "flight-offer",
+      "id": "1",
+      "source": "GDS",
+      "instantTicketingRequired": false,
+      "nonHomogeneous": false,
+      "oneWay": false,
+      "isUpsellOffer": false,
+      "lastTicketingDate": "2026-02-23",
+      "lastTicketingDateTime": "2026-02-23",
+      "numberOfBookableSeats": 9,
+      "itineraries": [
+        {
+          "duration": "PT6H10M",
+          "segments": [
+            {
+              "departure": {
+                "iataCode": "DEL",
+                "terminal": "3",
+                "at": "2026-02-23T20:05:00"
+              },
+              "arrival": {
+                "iataCode": "JED",
+                "terminal": "1",
+                "at": "2026-02-23T23:45:00"
+              },
+              "carrierCode": "SV",
+              "number": "759",
+              "aircraft": {
+                "code": "777"
+              },
+              "operating": {
+                "carrierCode": "SV"
+              },
+              "duration": "PT6H10M",
+              "id": "11",
+              "numberOfStops": 0,
+              "blacklistedInEU": false
+            }
+          ]
+        }
+      ],
+      "price": {
+        "currency": "EUR",
+        "total": "215.57",
+        "base": "134.00",
+        "fees": [
+          {
+            "amount": "0.00",
+            "type": "SUPPLIER"
+          },
+          {
+            "amount": "0.00",
+            "type": "TICKETING"
+          }
+        ],
+        "grandTotal": "215.57",
+        "additionalServices": [
+          {
+            "amount": "84.90",
+            "type": "CHECKED_BAGS"
+          }
+        ]
+      },
+      "pricingOptions": {
+        "fareType": [
+          "PUBLISHED"
+        ],
+        "includedCheckedBagsOnly": true
+      },
+      "validatingAirlineCodes": [
+        "SV"
+      ],
+      "travelerPricings": [
+        {
+          "travelerId": "1",
+          "fareOption": "STANDARD",
+          "travelerType": "ADULT",
+          "price": {
+            "currency": "EUR",
+            "total": "215.57",
+            "base": "134.00"
+          },
+          "fareDetailsBySegment": [
+            {
+              "segmentId": "11",
+              "cabin": "ECONOMY",
+              "fareBasis": "VAOTINB4",
+              "brandedFare": "NBASICE",
+              "brandedFareLabel": "BASIC ECO",
+              "class": "V",
+              "includedCheckedBags": {
+                "quantity": 1
+              },
+              "includedCabinBags": {
+                "quantity": 1
+              },
+              "amenities": [
+                {
+                  "description": "BASIC SEAT",
+                  "isChargeable": true,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "CHANGE FEE",
+                  "isChargeable": true,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "REFUNDABLE TICKET",
+                  "isChargeable": true,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "UPGRADE ELIGIBILITY",
+                  "isChargeable": true,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "CHANGEABLE TICKET",
+                  "isChargeable": true,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "60 PERCENT MILES EARNED",
+                  "isChargeable": false,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                },
+                {
+                  "description": "FREE BAG 1PC 20KG",
+                  "isChargeable": false,
+                  "amenityType": "BRANDED_FARES",
+                  "amenityProvider": {
+                    "name": "BrandedFare"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "package_data": null
+}

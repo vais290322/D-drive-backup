@@ -1,0 +1,9 @@
+Deposit Request: {"account_id":"6973ffaeea1a5a7023b06582","amount":10000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06582","amount":50000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":50000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":5000}, User: 6973ffadea1a5a7023b063ec
+Deposit Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":20000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":50000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":50000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":2000}, User: 6973ffadea1a5a7023b063ec
+Withdrawal Request: {"account_id":"6973ffaeea1a5a7023b06589","amount":5000}, User: 6973ffadea1a5a7023b063ec

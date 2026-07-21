@@ -1,0 +1,153 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 27%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 27%;
+    --chart-1: 222 47% 27%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 47 96% 53%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 222 47% 27%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 142 76% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 47% 35%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 47% 20%;
+    --sidebar-ring: 142 76% 36%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 47% 15%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 47% 15%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 222 47% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 47% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 47% 20%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 142 76% 36%;
+    --chart-1: 222 47% 45%;
+    --chart-2: 142 76% 45%;
+    --chart-3: 217 91% 70%;
+    --chart-4: 47 96% 63%;
+    --chart-5: 27 87% 77%;
+    --sidebar-background: 222 47% 15%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 142 76% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 47% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 47% 20%;
+    --sidebar-ring: 142 76% 36%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    zoom: 0.9;
+  }
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Hide navigation and other UI elements */
+  header,
+  nav,
+  .sidebar,
+  button:not(.print-button) {
+    display: none !important;
+  }
+
+  /* Ensure proper spacing for print */
+  .space-y-6 > * + * {
+    margin-top: 1.5rem;
+  }
+
+  /* Optimize table printing */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+}

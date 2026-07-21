@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/calls.css">
+  <title>Calls - Telecells Manager</title>
+</head>
+<body>
+  <section id="calls" class="page">
+    <h1>Call Management</h1>
+    <div class="action-bar">
+      <button id="add-call-btn" class="primary-btn">Log New Call</button>
+      <div class="call-filters">
+        <div class="filter-group">
+          <label class="filter-label">Type:</label>
+          <select id="type-filter" class="filter-select">
+            <option value="">All Types</option>
+            <option value="Inbound">Inbound</option>
+            <option value="Outbound">Outbound</option>
+            <option value="Support">Support</option>
+            <option value="Sales">Sales</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Status:</label>
+          <select id="status-filter" class="filter-select">
+            <option value="">All Statuses</option>
+            <option value="Completed">Completed</option>
+            <option value="Follow-up Required">Follow-up Required</option>
+            <option value="Transferred">Transferred</option>
+            <option value="Missed">Missed</option>
+          </select>
+        </div>
+        <input type="text" id="call-search" placeholder="Search calls...">
+      </div>
+    </div>
+    
+    <div class="call-stats-cards">
+      <div class="stat-card">
+        <h3>Total Calls</h3>
+        <p id="total-calls-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Inbound Calls</h3>
+        <p id="inbound-calls-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Outbound Calls</h3>
+        <p id="outbound-calls-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Avg Duration</h3>
+        <p id="calls-avg-duration">0 min</p>
+      </div>
+    </div>
+    
+    <div class="chart-card">
+      <h3>Call Volume by Day</h3>
+      <div class="call-chart">
+        <canvas id="call-volume-chart"></canvas>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table id="calls-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Employee</th>
+            <th>Customer</th>
+            <th>Duration</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="calls-list">
+          <!-- Call rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Call Form Modal -->
+    <div id="call-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Log New Call</h2>
+        <form id="call-form">
+          <div class="form-group">
+            <label for="employee-id">Employee</label>
+            <select id="employee-id" name="employeeId" required>
+              <option value="">Select Employee</option>
+              <!-- Options will be populated dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="customer-name">Customer Name</label>
+            <input type="text" id="customer-name" name="customerName" required>
+          </div>
+          <div class="form-group">
+            <label for="customer-phone">Customer Phone</label>
+            <input type="tel" id="customer-phone" name="customerPhone" required>
+          </div>
+          <div class="form-group">
+            <label for="call-type">Call Type</label>
+            <select id="call-type" name="type" required>
+              <option value="">Select Type</option>
+              <option value="Inbound">Inbound</option>
+              <option value="Outbound">Outbound</option>
+              <option value="Support">Support</option>
+              <option value="Sales">Sales</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="duration">Duration (minutes)</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+              <option value="">Select Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Follow-up Required">Follow-up Required</option>
+              <option value="Transferred">Transferred</option>
+              <option value="Missed">Missed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="secondary-btn" id="cancel-call">Cancel</button>
+            <button type="submit" class="primary-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Call Notes Modal -->
+    <div id="notes-modal" class="modal call-notes-modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Call Notes</h2>
+        <div id="call-notes-content"></div>
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" id="close-notes">Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-call-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this call record? This action cannot be undone.</p>
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" id="cancel-call-delete">Cancel</button>
+          <button type="button" class="danger-btn" id="confirm-call-delete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <script src="../js/calls.js"></script>
+</body>
+</html>

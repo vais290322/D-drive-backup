@@ -1,0 +1,44 @@
+import React from 'react'
+import {
+    SidebarMenu,
+    SidebarMenuItem,
+} from "@/components/ui/sidebar"
+import w from "@/assets/w.svg"
+import { useSidebar } from '@/components/ui/sidebar'
+import schoolLogo from "@/assets/schoolLogo.png"
+import vaisWhite from "@/assets/vaisWhite.png"
+import vaisBlack from "@/assets/vaisBlack.png"
+import vaisFav1 from "@/assets/vaisFav1.jpg"
+import vaisFav from "@/assets/vaisFav.png"
+import logo3 from "@/assets/logo3.png"
+
+const TeamSwitcher = () => {
+const {state} = useSidebar()
+// console.log("state : " ,state)
+
+    return (
+        <SidebarMenu>
+            <SidebarMenuItem>
+                {/* for logo  */}
+                <div className={`flex justify-center items-center border-b-[1px] border-[#9850b2] border-opacity-1 pb-8 pt-2 ${state === 'collapsed' ? 'border-none pb-0' : 'block'} `}>
+                    {
+                        state === 'collapsed' ? (
+                            <img src={w} alt="logo" className="w-30 h-10" />
+                            // <img src={vaisFav} alt="logo" className="w-30 h-10" />
+                        ) : (
+                            <img src={schoolLogo} alt="logo" className="w-30 h-10" />
+                            // <img src={logo3} alt="logo" className="w-32 h-24" />
+                            // <img src={vaisBlack} alt="logo" className="w-32 h-24" />
+                        )
+                    }  
+                </div>
+                {/* for version  */}
+                <div className=" flex  text-md leading-tight ml-10 justify-between mt-4">
+                    <span className={`${state === 'collapsed' ? 'hidden' : 'block'}`}>School</span> <span className={`${state === 'collapsed' ? 'hidden' : 'block'}`}>V-1.1.0</span>
+                </div>
+            </SidebarMenuItem>
+        </SidebarMenu>
+    )
+}
+
+export default TeamSwitcher

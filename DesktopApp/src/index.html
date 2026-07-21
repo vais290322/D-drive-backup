@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'">
+  <!-- Import the CSS files -->
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/sidebar.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/employees.css">
+  <link rel="stylesheet" href="./css/calls.css">
+  <link rel="stylesheet" href="./css/weather.css">
+  <link rel="stylesheet" href="./css/news.css">
+  <link rel="stylesheet" href="./css/settings.css">
+  <title>Telecells Manager</title>
+</head>
+<body>
+  <div class="app-container">
+    <nav class="sidebar">
+      <div class="logo">
+        <h2>Telecells</h2>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item active" data-page="dashboard">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </li>
+        <li class="nav-item" data-page="employees">
+          <span class="icon">👥</span>
+          <span>Employees</span>
+        </li>
+        <li class="nav-item" data-page="calls">
+          <span class="icon">📞</span>
+          <span>Calls</span>
+        </li>
+        <li class="nav-item" data-page="weather">
+          <span class="icon">🌤️</span>
+          <span>Weather</span>
+        </li>
+        <li class="nav-item" data-page="news">
+          <span class="icon">📰</span>
+          <span>News</span>
+        </li>
+        <li class="nav-item" data-page="settings">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </li>
+      </ul>
+    </nav>
+    
+    <main class="content" id="main-content">
+      <!-- Content will be loaded dynamically -->
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="./js/app.js" type="module"></script>
+</body>
+</html>

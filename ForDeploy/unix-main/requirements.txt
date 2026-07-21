@@ -1,0 +1,25 @@
+# Requirements for Restaurant Menu Management System
+
+# Core dependencies
+express==4.21.2
+cors==2.8.5
+cookie-parser==1.4.7
+
+# Database
+mongodb==6.17.0
+mongoose==8.16.0
+sqlite3==5.1.7
+
+# Authentication
+bcryptjs==2.4.3
+jsonwebtoken==9.0.2
+
+# File handling
+multer==2.0.1
+
+# Translation services
+@vitalets/google-translate-api==9.2.0
+@google-cloud/translate==8.0.2
+
+# Development dependencies
+nodemon==3.1.10
